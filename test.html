@@ -1,0 +1,372 @@
+<!-- file: care-questions-home-fixed.html -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Care Questions — Home</title>
+<style>
+  :root{
+    --bg:#f6f9fc; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+    --ring:rgba(59,130,246,.35); --shadow:0 10px 25px rgba(2,8,23,.12), 0 2px 6px rgba(2,8,23,.08);
+    --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Arial, ui-sans-serif, system-ui, -apple-system, "Helvetica Neue";
+    font-size:17px;
+    color:var(--ink); background:var(--bg);
+  }
+  .container{max-width:1200px;margin:20px auto;padding:0 16px}
+  .header{display:flex;gap:16px;justify-content:flex-end;align-items:center;margin-bottom:8px}
+  .top-button{
+    background: linear-gradient(180deg, #6ea2cf, #588fbe);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0,0,0,.2);
+    border: 3px solid #fff;
+    outline: 1px solid #c7d9ea;
+    text-decoration:none;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700; 
+    box-shadow:var(--shadow);
+    transition:transform .06s ease,filter .15s ease;
+  }
+  .top-button:hover{filter:brightness(1.05);transform:translateY(-1px)}
+  .top-button:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+    padding:12px;min-height:220px;border:1px solid #e5e7eb;
+  }
+  .card-start{background:#dff0fa;border:2px solid #b6e0fb;cursor:pointer;position:relative;overflow:hidden}
+  .card-start::before{
+    content:"";position:absolute;inset:0;background:url("https://ilonafridman.github.io/Starthere.jpg") center/cover no-repeat;opacity:.25;
+  }
+  .start-title{font-size:40px;font-weight:800;color:#17324a;position:relative}
+
+  .card-link{ color:inherit; text-decoration:none; width:100% }
+  .thumb{ width:100%; height:160px; border-radius:14px; background:#e9eef5; margin-bottom:12px; overflow:hidden; display:block }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block }
+  .card-title a{ display:inline-block; text-decoration:none; color:inherit; font-weight:800 }
+  .card-title{ font-size:20px; font-weight:800; line-height:1.2; }
+
+  @media (max-width: 900px){ .grid{ grid-template-columns:1fr 1fr } .card-start .start-title{font-size:34px}}
+  @media (max-width: 640px){ .grid{ grid-template-columns:1fr } .header{justify-content:center}}
+
+  /* Modal */
+  .modal{ position:fixed; inset:0; display:none; }
+  .modal[aria-hidden="false"]{ display:block; }
+  .modal-backdrop{ position:absolute; inset:0; background:rgba(15,23,42,.45); backdrop-filter: blur(4px); }
+  
+  .modal-card{
+    position:relative; max-width:960px; margin:6vh auto; background:var(--card); border-radius:22px;
+    box-shadow:var(--shadow); padding:24px 22px 16px; border:1px solid #e5e7eb;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .icon-btn.close{ position:absolute; right:10px; top:10px; background:#efefef; border:none;border-radius:999px; width:36px; height:36px; cursor:pointer; }
+  .modal-header h2{ margin:4px 0 8px; font-size:28px }
+  .lede{ color:var(--muted); margin:0 0 14px; font-size:16px }
+
+  .accordion{ display:flex; flex-direction:column; gap:12px; }
+  .section{ border:1px solid #d9e3f5; border-radius:16px; background:#f7fbff; overflow:hidden; }
+  .section summary{
+    list-style:none; cursor:pointer; padding:12px 16px 12px 36px; font-weight:800; color:#0c2f66;
+    background:#edf4ff; border-bottom:1px solid #d9e3f5; outline:none; position:relative;
+  }
+  .section summary::marker{ content:""; }
+  .section summary::-webkit-details-marker{ display:none; }
+  .section summary::before{
+    content:"";
+    position:absolute; left:14px; top:50%;
+    transform:translateY(-50%);
+    width:0; height:0; border-style:solid;
+    border-width:6px 0 6px 8px; border-color:transparent transparent transparent #0b2a5d;
+    transition:transform .18s ease;
+  }
+  .section[open] summary::before{ transform:translateY(-50%) rotate(90deg); }
+  .section[open] summary{ background:#dce9ff }
+  .section-content{ max-height: 35vh; overflow-y: auto; padding: 8px; }
+  .section-toolbar{ display:flex; gap:8px; padding:6px 6px 8px 6px; align-items:center; flex-wrap:wrap }
+  
+  /* This is the style for "Select all" and now the action buttons */
+  .mini{
+    border:1px solid #cbd5e1; 
+    background:#fff; 
+    color: #374151; /* Added explicit text color for consistency */
+    border-radius:10px; 
+    padding:8px 12px; /* Slightly increased padding for better look */
+    font-weight:700; 
+    cursor:pointer;
+    transition: background-color .15s ease;
+  }
+  .mini:hover {
+    background-color: #f9fafb;
+  }
+  .mini:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  .eres-btn{
+    margin-left:auto;
+    border:1px solid #94a3b8; background:#fff; border-radius:12px;
+    padding:8px 14px; font-weight:800; text-decoration:none; color:#0b2a5d;
+    display:inline-flex; align-items:center; line-height:1;
+  }
+  .eres-btn:hover{ background:#f1f5f9 }
+  .eres-btn:active{ transform:translateY(1px) }
+
+  .q-list{ list-style:none; padding:0; margin:0; }
+  .q-list li{ display:flex; gap:10px; padding:10px 8px; border-bottom:1px solid #eaeef5; line-height:1.35 }
+  .q-list li:last-child{ border-bottom:none }
+
+  .modal-footer{
+    display:flex; gap:12px; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap;
+    padding-bottom: 8px;
+  }
+  
+  .secondary{
+    background: linear-gradient(180deg, #6ea2cf, #588fbe);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0,0,0,.2);
+    border: 2px solid #fff;
+    outline: 1px solid #c7d9ea;
+    border-radius:12px; 
+    padding:10px 14px; 
+    text-decoration:none;
+    font-weight:700;
+    transition:transform .06s ease,filter .15s ease;
+  }
+  .secondary:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+ .links-pack{
+  display:flex;
+  flex-wrap:wrap;          /* allow next line */
+  gap:8px;
+  align-items:stretch;
+}
+.links-pack > h2{
+  flex:0 0 100%;           /* header on its own line */
+  margin:0 0 8px 0;        /* small space above buttons */
+}
+
+/* smaller, equal-height buttons */
+.secondary{
+  display:inline-flex;     
+  align-items:center;      
+  height:28px;             /* ~half height */
+  padding:0 10px;          /* tighter padding so height holds */
+  white-space:nowrap;      
+  line-height:1;           
+}
+
+  /* --- REMOVED: Unused .cta styles --- */
+
+  .action-buttons-group { display: flex; gap: 10px; }
+
+  .print-stage{position:fixed;left:-10000px;top:-10000px;width:794px;padding:24px;background:#fff}
+  .handout{
+    font-family: Arial, Helvetica, sans-serif; color:#0f172a; line-height:1.55; font-size:18px;
+  }
+  .handout .frame{
+    border:6px solid #6aa1cc; border-radius:36px; padding:16px; 
+  }
+  .handout .chip{
+    display:block;text-align:center;font-weight:700;font-size:22px;color:#1b4e73;
+    background:#e8f3ff;border:4px solid #6aa1cc;border-radius:16px;padding:10px 14px;margin:8px auto 14px; width:fit-content; min-width:340px;
+  }
+  .handout .panel{
+    border:6px solid #6aa1cc;border-radius:28px;padding:16px;min-height:160px;
+  }
+  .handout ul{margin:0;padding-left:22px}
+  .handout li{margin:8px 0}
+</style>
+</head>
+<body>
+  <header class="container header">
+   <a class="top-button" href="https://ilonafridman.github.io/careteam.html" >Your Care Team</a>
+    <a class="top-button" href="https://ilonafridman.github.io/information.html">Helpful Information Online</a>
+  </header>
+
+  <main class="container grid">
+    <!-- Cards... (no changes here) -->
+    <button class="card card-start" id="startHereBtn" aria-haspopup="dialog" aria-controls="startModal"><span class="start-title">Start Here</span></button>
+    <div class="card"><a class="thumb" href="https://ilonafridman.github.io/diagnosis/diagnosis.html" ><img src="https://ilonafridman.github.io/AfterDiagnosis.jpg" alt="After diagnosis image"></a><div class="card-title"><a href="https://ilonafridman.github.io/diagnosis/diagnosis.html" >Questions to ask after being diagnosed</a></div></div>
+    <div class="card"><a class="thumb" href="https://ilonafridman.github.io/choosingtreatment/choosingtreatment.html" ><img src="https://ilonafridman.github.io/ChoosingTreatment.jpg" alt="Choosing treatment image"></a><div class="card-title"><a href="https://ilonafridman.github.io/choosingtreatment/choosingtreatment.html" >Questions to explore when choosing treatment</a></div></div>
+    <div class="card"><a class="thumb" href="https://ilonafridman.github.io/treatment/treatment.html" ><img src="https://ilonafridman.github.io/DuringTreatment.jpg" alt="During treatment image"></a><div class="card-title"><a href="https://ilonafridman.github.io/treatment/treatment.html" >Questions to ask during treatment</a></div></div>
+    <div class="card"><a class="thumb" href="https://ilonafridman.github.io/aftertreatment/aftertreatment.html" ><img src="https://ilonafridman.github.io/AfterTreatment.JPG" alt="After treatment image"></a><div class="card-title"><a href="https://ilonafridman.github.io/aftertreatment/aftertreatment.html" >Questions to ask after treatment</a></div></div>
+    <div class="card"><a class="thumb" href="https://ilonafridman.github.io/complementary/complementary.html" ><img src="https://ilonafridman.github.io/Complementary Therapy.jpg" alt="Complementary therapy image"></a><div class="card-title"><a href="https://ilonafridman.github.io/complementary/complementary.html" >Questions to ask about integrative therapy</a></div></div>
+  </main>
+
+  <!-- ===== Start Here Modal ===== -->
+  <div class="modal" id="startModal" role="dialog" aria-modal="true" aria-labelledby="startModalTitle" aria-hidden="true">
+    <div class="modal-backdrop" data-close="startModal"></div>
+    <div class="modal-card" role="document">
+   <button class="icon-btn close" aria-label="Close dialog" data-close="startModal">✕</button>
+      
+      <div class="modal-header" aria-describedby="startModalIntro">
+        <h2 id="startModalTitle">Questions to ask your provider</h2>
+        <div id="startModalIntro" class="lede-panel">
+          <p>Many patients wonder, 'What should I ask my provider? How can I move forward?'</p>          
+          <p>Open any section and check the questions you want to bring to your care team. You can download your selected questions or explore online resources on your own.</p>
+        <h3 id="startModalTitle">Choose 3–5 questions for your next appointment</h3>
+ 
+        </div>
+      </div>
+
+      <div class="accordion" id="accordion"><!-- injected by JS --></div>
+
+      <div class="modal-footer">
+        <div class="action-buttons-group">
+          <!-- MODIFIED: Changed class from "cta cta-light" to "mini" -->
+           <h3 id="startModalTitle">Choose at least one questions to download a PDF handout</h3>
+         
+          <button id="downloadPdfBtn" class="mini" type="button" disabled>Download PDF</button>
+          <button id="printBtn"       class="mini" type="button" disabled>Print</button>
+          
+        </div>
+        <div class="links-pack">
+          <h2 id="startModalTitle">More questions to explore</h2>
+          <a class="secondary" href="https://ilonafridman.github.io/diagnosis/diagnosis.html" >After being diagnosed</a>
+          <a class="secondary" href="https://ilonafridman.github.io/choosingtreatment/choosingtreatment.html" >Choosing treatment</a>
+          <a class="secondary" href="https://ilonafridman.github.io/treatment/treatment.html" >During treatment</a>
+          <a class="secondary" href="https://ilonafridman.github.io/aftertreatment/aftertreatment.html" >After treatment</a>
+          <a class="secondary" href="https://ilonafridman.github.io/complementary/complementary.html" >About integrative therapy</a>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Other modals (no changes) -->
+  <div class="modal" id="modal-care-team" role="dialog" aria-modal="true" aria-hidden="true"><div class="modal-backdrop" data-close="modal-care-team"></div><div class="modal-card"><button class="icon-btn close" aria-label="Close dialog" data-close="modal-care-team">✕</button><h2>Your Care Team</h2><p>List roles/contacts here.</p></div></div>
+  <div class="modal" id="modal-helpful" role="dialog" aria-modal="true" aria-hidden="true"><div class="modal-backdrop" data-close="modal-helpful"></div><div class="modal-card"><button class="icon-btn close" aria-label="Close dialog" data-close="modal-helpful">✕</button><h2>Helpful Information</h2><p>Portal, maps, transportation, financial counseling, support, etc.</p></div></div>
+
+  <div id="printStage" class="print-stage" aria-hidden="true"></div>
+
+<script>
+/* ---------- Data ---------- */
+const TOPICS = {
+  diagnosis: { title: "I would like to understand my diagnosis better", questions: ["What type and stage of breast cancer do I have?", "How fast is my cancer growing?", "Do I need any more tests or biopsies to be sure about my diagnosis?", "Do I need to do genetic testing?", "How much time do I have to decide on my treatment?", "Which doctors should I see, and when should I see them?"] },
+  choosing: { title: "I need to choose a treatment", questions: ["What treatment options do I have?", "Which treatment gives the lowest chance of the cancer coming back?", "If you were in my place, which treatment would you choose?", "What happens if I decide not to have surgery, radiation, or chemotherapy?", "How soon do I need to start treatment? Do I have time to get a second opinion?", "What are my surgery options?", "What problems or risks come with each type of surgery?", "What are the side effects of radiation?", "Will I need chemotherapy?", "Will I need hormone therapy?", "When should I decide about breast reconstruction surgery?"] },
+  during: { title: "I am going through treatment", questions: ["Can you walk me through the steps involved in my treatment plan?", "What side effects should I expect from my treatment?", "Are there any tools or tips you recommend for coping with common side effects?", "When should I contact my healthcare team between visits?", "What should I do if my personal situation makes it hard to get to treatment?", "Are there counselors or support groups available?", "What integrative therapy services are available to support me during treatment?", "The cost of my treatment is high — what options do I have for financial assistance?"] },
+  integrative: { title: "I hope to learn about complementary and integrative therapy", questions: ["Can any vitamins, herbs, or lifestyle changes make my treatment less effective or cause side effects?", "How do I know if a supplement or therapy is safe for me?", "Where can I find good information about complementary/non-mainstream therapies for people with cancer?", "What should I eat or drink during treatment to help me stay strong and recover better?", "Where can I find a doctor or specialist who works in integrative medicine?"] },
+  after: { title: "I completed my treatment. What is next?", questions: ["Which specific tests or screenings will I need during follow-up, and how often?", "Who will coordinate my follow-up care among my healthcare providers?", "What symptoms should prompt me to contact you between scheduled visits?", "Am I at increased risk for any health conditions because of my treatment?", "Are there lifestyle changes or behaviors you recommend to help reduce the risk of cancer coming back?", "Can you recommend support groups or counseling services for breast cancer survivors?"] }
+};
+const ER_LINKS = { diagnosis: "https://ilonafridman.github.io/diagnosis/daignosisinfo.html", choosing: "https://ilonafridman.github.io/choosingtreatment/choosingtreatmentinfo.html", during: "https://ilonafridman.github.io/treatment/treatmentinfo.html", after: "https://ilonafridman.github.io/aftertreatment/aftertreatmentinfo.html", integrative: "https://ilonafridman.github.io/complementary/complementaryinfo.html" };
+const RECOMMENDATIONS = ["<b>Consider bringing a friend or loved one</b> to help you remember information shared during your appointment.", "<b>Learn about your specific condition</b> from trusted sources of information.", "<b>Your healthcare team welcomes your questions.</b> Don’t hesitate to ask to clarify anything you're unsure about.", "<b>Your questions are important.</b> Sharing your questions at the beginning of the appointment will help address your concerns.", "<b>Stay connected between visits.</b> Use the patient portal, phone, or email to reach the team when questions arise.", "<b>Connect with others.</b> Support groups, social workers, and patient advocates can provide emotional support and resources."];
+
+/* ---------- Modal helpers ---------- */
+function openModal(id){ const el = document.getElementById(id); el.setAttribute("aria-hidden","false"); const first = el.querySelector("button, [href], input, summary"); if(first) first.focus(); document.addEventListener("keydown", escClose); }
+function closeModal(id){ const el = document.getElementById(id); el.setAttribute("aria-hidden","true"); document.removeEventListener("keydown", escClose); }
+function escClose(e){ if(e.key === "Escape"){ document.querySelectorAll(".modal[aria-hidden='false']").forEach(m=>m.setAttribute("aria-hidden","true")); } }
+document.querySelectorAll("[data-open]").forEach(btn=>btn.addEventListener("click",e=>{e.preventDefault();openModal(btn.getAttribute("data-open"));}));
+document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>closeModal(btn.getAttribute("data-close"))));
+document.querySelectorAll(".modal-backdrop").forEach(bg=>bg.addEventListener("click",()=>closeModal(bg.getAttribute("data-close"))));
+document.getElementById("startHereBtn").addEventListener("click",()=>openModal("startModal"));
+
+/* ---------- Build sections with Select/Clear + eResources ---------- */
+const container = document.getElementById("accordion");
+function buildSections(){
+  container.innerHTML = "";
+  Object.entries(TOPICS).forEach(([key, topic])=>{
+    const details = document.createElement("details"); details.className = "section"; details.open = false;
+    const summary = document.createElement("summary"); summary.textContent = topic.title;
+    const wrap = document.createElement("div"); wrap.className = "section-content";
+    const toolbar = document.createElement("div"); toolbar.className = "section-toolbar";
+    const selectBtn = document.createElement("button"); selectBtn.className = "mini"; selectBtn.type = "button"; selectBtn.textContent = "Select all";
+    const clearBtn = document.createElement("button"); clearBtn.className = "mini"; clearBtn.type = "button"; clearBtn.textContent = "Clear all";
+    const er = document.createElement("a"); er.className = "eres-btn"; er.href = ER_LINKS[key] || "#"; er.target = "_blank"; er.rel = "noopener"; er.setAttribute("aria-label", `Open eResources to Read for ${topic.title}`); er.textContent = "eResources to Read";
+    const list = document.createElement("ul"); list.className = "q-list";
+    topic.questions.forEach((q, i)=>{ const id = `q-${key}-${i}`; const li = document.createElement("li"); li.innerHTML = `<input type="checkbox" id="${id}" /><label for="${id}">${q}</label>`; list.appendChild(li); });
+    selectBtn.addEventListener("click", ()=>{ list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=true); updateActionsEnabled(); });
+    clearBtn.addEventListener("click", ()=>{ list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=false); updateActionsEnabled(); });
+    toolbar.appendChild(selectBtn); toolbar.appendChild(clearBtn); toolbar.appendChild(er);
+    wrap.appendChild(toolbar); wrap.appendChild(list);
+    details.appendChild(summary); details.appendChild(wrap);
+    container.appendChild(details);
+  });
+}
+buildSections();
+
+// ----- Selection helpers -----
+function getSelectedQuestions(){
+  return Array.from(document.querySelectorAll(".q-list input[type='checkbox']:checked"))
+    .map(cb => cb.nextElementSibling.textContent.trim());
+}
+function updateActionsEnabled(){
+  const any = getSelectedQuestions().length > 0;
+  document.getElementById('downloadPdfBtn').disabled = !any;
+  document.getElementById('printBtn').disabled = !any;
+  document.getElementById('emailBtn').disabled = !any;
+}
+container.addEventListener("change", updateActionsEnabled);
+
+// ----- Handout (outlined) -----
+function handoutHTML(selected){
+  const items = selected.map(q => `<li>${q}</li>`).join('');
+  const recs  = RECOMMENDATIONS.map(r => `<li>${r}</li>`).join('');
+  return `<div class="handout"><div class="frame"><span class="chip">Questions that you chose</span><div class="panel">${selected.length ? `<ul>${items}</ul>` : '<p>(No questions selected)</p>'}</div><div style="height:18px"></div><span class="chip">Recommendations that other patients found helpful</span><div class="panel"><ul>${recs}</ul></div></div></div>`;
+}
+function buildHandoutStage(selected){
+  const stage = document.getElementById('printStage');
+  stage.innerHTML = handoutHTML(selected);
+  return stage.firstElementChild;
+}
+
+// ----- Download as PDF -----
+async function downloadSelectedAsPDF(){
+  const selected = getSelectedQuestions(); if(!selected.length) return;
+  const node = buildHandoutStage(selected);
+  const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
+  const img = canvas.toDataURL('image/png');
+  const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
+  const pageW = pdf.internal.pageSize.getWidth(); const imgW = pageW; const imgH = canvas.height * (imgW / canvas.width); const pageH = pdf.internal.pageSize.getHeight();
+  if (imgH <= pageH){ pdf.addImage(img,'PNG',0,0,imgW,imgH); } else { let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm; while (y < canvas.height){ const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y); c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height); const data = c.toDataURL('image/png'); if (y) pdf.addPage(); pdf.addImage(data,'PNG',0,0,imgW,pageH); y += pageHPx; } }
+  pdf.save('questions-handout.pdf');
+}
+
+// ----- Print (same outline) -----
+function printSelected(){
+  const selected = getSelectedQuestions(); if(!selected.length) return;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Questions Handout</title><style>${document.querySelector('style').innerHTML}</style></head><body onload="window.print()"><div style="padding:24px;max-width:850px;margin:0 auto">${handoutHTML(selected)}</div></body></html>`;
+  const w = window.open('', '_blank'); w.document.open(); w.document.write(html); w.document.close();
+}
+
+// ----- Email (attach PDF) -----
+async function emailSelectedPDF(){
+  const selected = getSelectedQuestions(); if(!selected.length) return;
+  const node = buildHandoutStage(selected);
+  const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
+  const data = canvas.toDataURL('image/png');
+  const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
+  const pageW = pdf.internal.pageSize.getWidth(); const imgW = pageW; const imgH = canvas.height * (imgW / canvas.width); const pageH = pdf.internal.pageSize.getHeight();
+  if (imgH <= pageH){ pdf.addImage(data,'PNG',0,0,imgW,imgH); } else { let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm; while (y < canvas.height){ const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y); c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height); const slice = c.toDataURL('image/png'); if (y) pdf.addPage(); pdf.addImage(slice,'PNG',0,0,imgW,pageH); y += pageHPx; } }
+  const blob = pdf.output('blob');
+  const file = new File([blob], 'questions-handout.pdf', {type:'application/pdf'});
+  if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'Questions Handout', text:'Please see attached questions handout.' }).catch(()=>{}); return; }
+  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'questions-handout.pdf'; a.click(); URL.revokeObjectURL(url);
+  const body = encodeURIComponent('Attached is my Questions Handout (PDF). If the attachment did not appear, I just downloaded it—please see the downloaded file.');
+  window.location.href = `mailto:?subject=${encodeURIComponent('Questions Handout')}&body=${body}`;
+}
+
+// Add event listeners to the new buttons
+document.getElementById('downloadPdfBtn').addEventListener('click', downloadSelectedAsPDF);
+document.getElementById('printBtn').addEventListener('click', printSelected);
+document.getElementById('emailBtn').addEventListener('click', emailSelectedPDF);
+
+// Initial check
+updateActionsEnabled();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
