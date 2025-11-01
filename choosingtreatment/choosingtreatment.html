@@ -65,18 +65,16 @@
     font-size:22px;
   }
  .acc-header::before{
-  content:"▸";                 /* right-pointing caret */
+  content:"▸";
   position:absolute;
   left:14px; top:50%;
   transform:translateY(-50%);
   font-size:35px;
-  color:#4b5563;               /* dark gray, darker than panel */
+  color:#4b5563;
   opacity:.95;
 }
-
-/* Open: arrow faces down */
 .acc-header[aria-expanded="true"]::before{
-  content:"▾";                 /* down-pointing caret */
+  content:"▾";
 }
   .acc-header[aria-expanded="true"]::before{ transform:translateY(-50%) rotate(0deg) }
   .acc-header:hover{background:var(--panel-hover);transform:translateY(-1px)}
@@ -106,7 +104,6 @@
   .cta:focus-visible{outline:none;box-shadow:var(--ring)}
   .cta[disabled]{opacity:.55;cursor:not-allowed;filter:grayscale(0.35)}
 
-  /* Style for tool buttons in the side panel */
   .side .tool-btn {
     width: 100%;
     font-size: 18px;
@@ -120,9 +117,9 @@
   .hint{font-size:14px;color:#374151}
 
   /* Hidden handout container for PDF/print/email rendering */
-  .print-stage{position:fixed;left:-10000px;top:-10000px;width:794px; /* ~A4 width at 96dpi */ padding:24px;background:#fff}
+  .print-stage{position:fixed;left:-10000px;top:-10000px;width:794px; padding:24px;background:#fff}
 
-  /* Handout outline styling (matches your screenshot) */
+  /* Handout outline styling */
   .handout{
     font-family: Arial, Helvetica, sans-serif; color:#0f172a; line-height:1.55; font-size:18px;
   }
@@ -136,6 +133,7 @@
   .handout .panel{
     border:6px solid #6aa1cc;border-radius:28px;padding:16px;min-height:160px;
   }
+  .handout h4{ margin:0 0 8px; font-size:18px; }
   .handout ul{margin:0;padding-left:22px}
   .handout li{margin:8px 0}
   @media (max-width:760px){
@@ -179,8 +177,7 @@
       <button id="downloadPdfBtn" class="tool-btn" type="button" disabled>Download PDF</button>
       <button id="printBtn"       class="tool-btn" type="button" disabled>Print</button>
    
-    
-     <p class="hint">Tip: Check any number of questions you’d like to include in the handout</p>
+     <p id="selHint" class="hint">No questions selected yet.</p>
     </aside>
   </section>
 </main>
@@ -190,7 +187,6 @@
 
 <script>
   // ------- Data -------
-  // MODIFIED: Updated with the new list of questions and categories
   const DATA = [
     { title: 'Questions to understand diagnosis & treatment', questions: [
       'What type and stage of prostate cancer do I have?',
@@ -244,7 +240,6 @@
       'What are the short-term side effects of hormone therapy?',
       'What are the long-term side effects of hormone therapy?'
     ]},
-   
     { title: 'Ask financial services about finances and insurance', questions: [
       'Whom should I talk to plan my treatment expenses?',
       'How will treatment affect my finances?',
@@ -282,7 +277,6 @@
     beaker: () => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8M10 3v6L5 21h14l-5-12V3" /><path d="M7 16h10" /></svg>`
   };
 
-  // MODIFIED: Updated icon logic for new categories
   function iconFor(title){
     const t = title.toLowerCase();
     if (t.includes('support') || t.includes('next steps')) return Icons.hug();
@@ -333,7 +327,8 @@
     document.addEventListener('change', updateActionsEnabled);
     document.getElementById('downloadPdfBtn').addEventListener('click', downloadSelectedAsPDF);
     document.getElementById('printBtn').addEventListener('click', printSelected);
-    document.getElementById('emailBtn').addEventListener('click', emailSelectedPDF);
+    // Optional email button: code handles its absence safely
+    document.getElementById('emailBtn')?.addEventListener('click', emailSelectedPDF);
   })();
 
   function togglePanel(i){
@@ -361,142 +356,192 @@
     singleOpen = true;
   }
 
-  // ----- Selection helpers -----
+  // ----- Selection helpers (group by category, like Code 1) -----
   function getSelectedQuestions(){
     return Array.from(document.querySelectorAll('.q-list input[type="checkbox"]:checked'))
       .map(cb => cb.nextElementSibling.textContent.trim());
   }
+
+  function getSelectedByCategory(){
+    const grouped = new Map(); // idx => { title, items:[] }
+    document.querySelectorAll('.q-list input[type="checkbox"]:checked').forEach(cb => {
+      const parts = cb.id.split('-'); // q-<idx>-<i>
+      const idx = parseInt(parts[1], 10);
+      const title = DATA[idx]?.title || `Section ${idx+1}`;
+      const text = cb.nextElementSibling.textContent.trim();
+      if (!grouped.has(idx)) grouped.set(idx, { title, items: [] });
+      grouped.get(idx).items.push(text);
+    });
+    return Array.from(grouped.entries()).sort((a,b)=>a[0]-b[0]).map(([,v])=>v);
+  }
+
   function updateActionsEnabled(){
     const count = getSelectedQuestions().length;
     const any = count > 0;
     document.getElementById('downloadPdfBtn').disabled = !any;
     document.getElementById('printBtn').disabled = !any;
-    document.getElementById('emailBtn').disabled = !any;
+    const emailBtn = document.getElementById('emailBtn');
+    if (emailBtn) emailBtn.disabled = !any;
     const hint = document.getElementById('selHint');
-    hint.textContent = any ? `${count} question${count>1?'s':''} selected.` : 'No questions selected yet.';
+    if (hint) hint.textContent = any ? `${count} question${count>1?'s':''} selected.` : 'No questions selected yet.';
   }
 
-  // ----- Handout (outlined) -----
-  function handoutHTML(selected){
-    const items = selected.map(q => `<li>${q}</li>`).join('');
+  // ----- Handout (with the same instructions panel as Code 1) -----
+  function handoutHTML(selectedOrGrouped){
+    const instructions = `
+      <div class="panel">
+        <p>Here are the questions you choose to ask your doctors.</p>
+        <ul>
+          <li>Your doctors and nurses are happy to answer your questions. Don’t hesitate to ask!</li>
+          <li>It's okay to ask different doctors for help. Each one is an expert on a different part of your care—reach more than one expert!</li>
+          <li>Think about your most important questions for today. If you have more than 3–5 questions, you might need more than one visit to clarify all of them.</li>
+        </ul>
+      </div>`;
+
+    let questionsHTML = '';
+    if (Array.isArray(selectedOrGrouped) && selectedOrGrouped.length && typeof selectedOrGrouped[0] === 'string') {
+      // flat array (back-compat)
+      questionsHTML = `<div class="panel"><ul>${selectedOrGrouped.map(q=>`<li>${q}</li>`).join('')}</ul></div>`;
+    } else {
+      const groups = Array.isArray(selectedOrGrouped) ? selectedOrGrouped : [];
+      questionsHTML = groups.length
+        ? groups.map(g => `<div class="panel"><h4>${g.title}</h4><ul>${g.items.map(q=>`<li>${q}</li>`).join('')}</ul></div>`).join('<div style="height:14px"></div>')
+        : `<div class="panel"><p>(Chosen questions appear here.)</p></div>`;
+    }
+
     const recs  = RECOMMENDATIONS.map(r => `<li>${r}</li>`).join('');
+
     return `
       <div class="handout">
         <div class="frame">
           <span class="chip">Questions that you chose</span>
-          <div class="panel">
-            ${selected.length ? `<ul>${items}</ul>` : '<p>(No questions selected)</p>'}
-          </div>
-
+          ${instructions}
+          <div style="height:14px"></div>
+          ${questionsHTML}
           <div style="height:18px"></div>
-
           <span class="chip">Recommendations that other patients found helpful</span>
           <div class="panel">
             <ul>${recs}</ul>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
-  // Build a hidden DOM node with the handout (for html2canvas / print)
-  function buildHandoutStage(selected){
+  // Build hidden DOM for rendering/printing (grouped)
+  function buildHandoutStage(){
     const stage = document.getElementById('printStage');
-    stage.innerHTML = ''; // clear
-    const wrap = document.createElement('div');
-    wrap.className = 'handout';
-    stage.innerHTML = handoutHTML(selected);
-    return stage.firstElementChild; // return the .handout root
+    const grouped = getSelectedByCategory();
+    stage.innerHTML = handoutHTML(grouped);
+    return stage.firstElementChild; // .handout
+  }
+
+  // ----- PDF (block-by-block pagination like Code 1) -----
+  async function createHandoutPDF(){
+    const any = getSelectedQuestions().length > 0;
+    if(!any) return null;
+
+    const root = buildHandoutStage();           // .handout
+    const frame = root.querySelector('.frame');
+
+    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const contentW = pageW - margin * 2;
+    const contentH = pageH - margin * 2;
+    const overlapPx = 6;
+
+    let cursorHmm = 0;
+
+    const blocks = Array.from(frame.children).filter(
+      el => el.classList.contains('chip') || el.classList.contains('panel')
+    );
+
+    for (const el of blocks) {
+      const canvas = await html2canvas(el, {
+        backgroundColor:'#ffffff',
+        scale: Math.min(2, window.devicePixelRatio || 1.5)
+      });
+
+      const pxPerMm = canvas.width / contentW;
+      const blockHmm = canvas.height / pxPerMm;
+
+      if (cursorHmm > 0 && cursorHmm + blockHmm > contentH) {
+        pdf.addPage();
+        cursorHmm = 0;
+      }
+
+      if (blockHmm <= contentH) {
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin + cursorHmm, contentW, blockHmm);
+        cursorHmm += blockHmm + 2;
+      } else {
+        // Slice tall block across pages with slight overlap
+        let y = 0;
+        const pageContentHPx = contentH * pxPerMm;
+        while (y < canvas.height) {
+          const sliceH = Math.min(pageContentHPx, canvas.height - y);
+          const c = document.createElement('canvas');
+          c.width = canvas.width;
+          c.height = sliceH;
+          c.getContext('2d').drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+          const sliceHmm = sliceH / pxPerMm;
+
+          if (cursorHmm > 0) {
+            pdf.addPage();
+            cursorHmm = 0;
+          }
+          pdf.addImage(c.toDataURL('image/png'), 'PNG', margin, margin + cursorHmm, contentW, sliceHmm);
+          y += sliceH - overlapPx;
+          if (y < canvas.height) {
+            pdf.addPage();
+            cursorHmm = 0;
+          }
+        }
+        cursorHmm = 2;
+      }
+    }
+    return pdf;
   }
 
   // ----- Download as PDF -----
   async function downloadSelectedAsPDF(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
-    const node = buildHandoutStage(selected);
-    const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
-    const img = canvas.toDataURL('image/png');
-    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const imgW = pageW;
-    const imgH = canvas.height * (imgW / canvas.width);
-    const pageH = pdf.internal.pageSize.getHeight();
-
-    if (imgH <= pageH){ pdf.addImage(img,'PNG',0,0,imgW,imgH); }
-    else{
-      let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm;
-      while (y < canvas.height){
-        const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y);
-        c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height);
-        const data = c.toDataURL('image/png');
-        if (y) pdf.addPage();
-        pdf.addImage(data,'PNG',0,0,imgW,pageH);
-        y += pageHPx;
-      }
-    }
+    const pdf = await createHandoutPDF();
+    if (!pdf) return;
     pdf.save('questions-handout.pdf');
   }
 
-  // ----- Print (same outline) -----
+  // ----- Print (grouped by category) -----
   function printSelected(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
+    const selectedCount = getSelectedQuestions().length;
+    if(!selectedCount) return;
+    const grouped = getSelectedByCategory();
     const html = `
       <!doctype html><html><head><meta charset="utf-8">
       <title>Questions Handout</title>
       <style>${document.querySelector('style').innerHTML}</style>
       </head><body onload="window.print()">
-        <div style="padding:24px;max-width:850px;margin:0 auto">${handoutHTML(selected)}</div>
+        <div style="padding:24px;max-width:850px;margin:0 auto">${handoutHTML(grouped)}</div>
       </body></html>`;
     const w = window.open('', '_blank');
     w.document.open(); w.document.write(html); w.document.close();
   }
 
-  // ----- Email (attach PDF if Web Share API is supported; otherwise fallback) -----
+  // ----- Email (optional; safe if no button present) -----
   async function emailSelectedPDF(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
+    const pdf = await createHandoutPDF();
+    if (!pdf) return;
 
-    // Generate PDF blob
-    const node = buildHandoutStage(selected);
-    const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
-    const data = canvas.toDataURL('image/png');
-    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const imgW = pageW;
-    const imgH = canvas.height * (imgW / canvas.width);
-    const pageH = pdf.internal.pageSize.getHeight();
-
-    if (imgH <= pageH){ pdf.addImage(data,'PNG',0,0,imgW,imgH); }
-    else{
-      let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm;
-      while (y < canvas.height){
-        const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y);
-        c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height);
-        const slice = c.toDataURL('image/png');
-        if (y) pdf.addPage();
-        pdf.addImage(slice,'PNG',0,0,imgW,pageH);
-        y += pageHPx;
-      }
-    }
     const blob = pdf.output('blob');
     const file = new File([blob], 'questions-handout.pdf', {type:'application/pdf'});
 
-    // Try Web Share with file (works on many mobile browsers & some desktops)
     if (navigator.canShare && navigator.canShare({ files:[file] })){
-      await navigator.share({
-        files:[file],
-        title:'Questions Handout',
-        text:'Please see attached questions handout.'
-      }).catch(()=>{ /* user cancelled share */ });
+      await navigator.share({ files:[file], title:'Questions Handout', text:'Please see attached questions handout.' }).catch(()=>{});
       return;
     }
-
-    // Fallback: save and open a mailto with a note
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'questions-handout.pdf'; a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'questions-handout.pdf'; a.click();
     URL.revokeObjectURL(url);
+
     const body = encodeURIComponent(
       'Attached is my Questions Handout (PDF). If the attachment did not appear, I just downloaded it—please see the downloaded file.'
     );
