@@ -1,5 +1,3 @@
-<!-- file: home.html -->
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -17,91 +15,83 @@
         --shadow: 0 10px 25px rgba(2, 8, 23, 0.12), 0 2px 6px rgba(2, 8, 23, 0.08);
         --radius: 20px;
         --brand: #2563eb;
-        --brand-strong:#1d4ed8;
+        --brand-strong: #1d4ed8;
       }
 
-      *{ box-sizing:border-box }
-      html,body{ height:100% }
-      body{
-        margin:0;
+      * { box-sizing: border-box }
+      html, body { height: 100% }
+      body {
+        margin: 0;
         font-family: Arial, ui-sans-serif, system-ui, -apple-system, "Helvetica Neue";
-        font-size:17px; color:var(--ink); background:var(--bg);
+        font-size: 17px; color: var(--ink); background: var(--bg);
       }
-      body.modal-open{ overflow:hidden }
+      body.modal-open { overflow: hidden }
 
-      .container{ max-width:1200px; margin:20px auto; padding:0 16px }
-      .header{ display:flex; gap:16px; justify-content:flex-end; align-items:center; margin-bottom:8px }
+      .container { max-width: 1200px; margin: 20px auto; padding: 0 16px }
+      .header { display: flex; gap: 16px; justify-content: flex-end; align-items: center; margin-bottom: 8px }
       .top-button{
-        background:linear-gradient(180deg,#6ea2cf,#588fbe); color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.2);
+        background: linear-gradient(180deg,#6ea2cf,#588fbe); color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.2);
         border:3px solid #fff; outline:1px solid #c7d9ea; text-decoration:none; padding:14px 22px; border-radius:14px; font-weight:700;
-        box-shadow:var(--shadow); transition:transform .06s ease, filter .15s ease;
+        box-shadow: var(--shadow); transition: transform .06s ease, filter .15s ease;
       }
-      .top-button:hover{ filter:brightness(1.05); transform:translateY(-1px) }
-      .top-button:focus-visible{ outline:3px solid var(--ring); outline-offset:3px }
+      .top-button:hover { filter: brightness(1.05); transform: translateY(-1px) }
+      .top-button:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px }
 
       /* Cards */
-      .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px }
-      .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:12px; min-height:220px; border:1px solid #e5e7eb }
-      .thumb{ width:100%; height:160px; border-radius:14px; background:#e9eef5; margin-bottom:12px; overflow:hidden; display:block }
-      .thumb img{ width:100%; height:100%; object-fit:cover; display:block }
-      .card-title a{ display:inline-block; text-decoration:none; color:inherit; font-weight:800 }
-      .card-title{ font-size:20px; font-weight:800; line-height:1.2 }
-      .card-desc{ font-size:15px; color:var(--muted); margin-top:6px; line-height:1.35 }
+      .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px }
+      .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 12px; min-height: 220px; border: 1px solid #e5e7eb }
+      .thumb { width: 100%; height: 160px; border-radius: 14px; background: #e9eef5; margin-bottom: 12px; overflow: hidden; display: block }
+      .thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
+      .card-title a { display:inline-block; text-decoration:none; color:inherit; font-weight:800 }
+      .card-title { font-size: 20px; font-weight: 800; line-height: 1.2 }
       @media (max-width:900px){ .grid{ grid-template-columns:1fr 1fr } }
       @media (max-width:640px){ .grid{ grid-template-columns:1fr } .header{ justify-content:center } }
 
       /* Modal base */
-      .modal{ position:fixed; inset:0; display:none; z-index:999 }
-      .modal[aria-hidden="false"]{ display:block }
-      .modal-backdrop{ position:absolute; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(4px) }
-      .icon-btn.close{ position:absolute; right:10px; top:10px; background:#efefef; border:none; border-radius:999px; width:36px; height:36px; cursor:pointer }
+      .modal { position: fixed; inset: 0; display: none; z-index: 999 }
+      .modal[aria-hidden="false"] { display: block }
+      .modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(4px) }
+      .icon-btn.close { position: absolute; right: 10px; top: 10px; background: #efefef; border: none; border-radius: 999px; width: 36px; height: 36px; cursor: pointer }
 
       /* Instructions window (blocking) */
-      .intro-window .modal-card{
-        position:relative; max-width:980px; margin:7vh auto; background:var(--card);
-        border-radius:22px; box-shadow:var(--shadow); padding:20px; border:1px solid #e5e7eb;
-        max-height:84vh; overflow:auto;
+      .intro-window .modal-card {
+        position: relative; max-width: 980px; margin: 7vh auto; background: var(--card);
+        border-radius: 22px; box-shadow: var(--shadow); padding: 20px; border: 1px solid #e5e7eb;
+        max-height: 84vh; overflow: auto;
       }
 
-      /* Side-by-side layout */
-      .intro-layout{
-        display:grid; gap:16px;
-        grid-template-columns: 1fr; align-items:start;
-      }
-      @media (min-width:768px){
-        .intro-layout{
-          grid-template-columns: 1.3fr 1fr;
-        }
-      }
-      .intro-copy h1{ margin:2px 0 10px; font-size:28px; line-height:1.2 }
-      .intro-copy .lede{ color:var(--muted); margin:0 0 12px }
-      .intro-copy ul{ margin:10px 0 8px 22px }
-      .intro-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
+      .intro-layout { display: grid; gap: 16px; grid-template-columns: 1fr; align-items: start }
+      @media (min-width:768px){ .intro-layout { grid-template-columns: 1.3fr 1fr } }
+      .intro-copy h1 { margin: 2px 0 10px; font-size: 28px; line-height: 1.2 }
+      .intro-copy .lede { color: var(--muted); margin: 0 0 12px }
+      .intro-copy ul { margin: 10px 0 8px 22px }
+      .intro-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
 
-      .btn{
+      .btn {
         display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; line-height:1;
         border-radius:12px; padding:12px 16px; border:1px solid transparent; cursor:pointer;
       }
-      .btn-primary{ background:linear-gradient(180deg,var(--brand),var(--brand-strong)); color:#fff; box-shadow:var(--shadow) }
-      .btn-secondary{ background:#f1f59; color:#0b2a5d; border-color:#c7d9ea }
+      .btn-primary { background: linear-gradient(180deg,var(--brand),var(--brand-strong)); color:#fff; box-shadow: var(--shadow) }
+      .btn-secondary { background: #f1f5f9; color: #0b2a5d; border: 1px solid #c7d9ea }
 
-      .intro-media{
-        width:100%; height:100%;
-        min-height:220px;
+      .intro-media {
+        width: 100%; height: 100%; min-height: 220px;
         background:#f7fafc; border:1px solid #e5e7eb; border-radius:16px;
         overflow:hidden; box-shadow:0 2px 10px rgba(2,8,23,.06)
       }
-      .intro-media img{
-        width:100%; height:100%; object-fit:cover; display:block;
-      }
+      .intro-media img { width: 100%; height: 100%; object-fit: cover; display: block }
 
-      /* Existing Start modal */
-      .start-modal .modal-card{ position:relative; max-width:960px; margin:6vh auto; background:var(--card); border-radius:22px; box-shadow:var(--shadow); padding:24px 22px 16px; border:1px solid #e5e7eb; max-height:85vh; overflow-y:auto }
-      .modal-header h2{ margin:4px 0 8px; font-size:28px }
-      .lede{ color:var(--muted); margin:0 0 14px; font-size:16px }
-      .accordion{ display:flex; flex-direction:column; gap:12px }
-      .section{ border:1px solid #d9e3f5; border-radius:16px; background:#f7fbff; overflow:hidden }
-      .section summary{ list-style:none; cursor:pointer; padding:12px 16px 12px 36px; font-weight:800; color:#0c2f66; background:#edf4ff; border-bottom:1px solid #d9e3f5; outline:none; position:relative }
+      /* Start modal */
+      .start-modal .modal-card {
+        position: relative; max-width: 960px; margin: 6vh auto; background: var(--card);
+        border-radius: 22px; box-shadow: var(--shadow); padding: 24px 22px 16px; border: 1px solid #e5e7eb;
+        max-height: 85vh; overflow-y: auto;
+      }
+      .modal-header h2 { margin: 4px 0 8px; font-size: 28px }
+      .lede { color: var(--muted); margin: 0 0 14px; font-size: 16px }
+      .accordion { display: flex; flex-direction: column; gap: 12px }
+      .section { border:1px solid #d9e3f5; border-radius:16px; background:#f7fbff; overflow:hidden }
+      .section summary { list-style:none; cursor:pointer; padding:12px 16px 12px 36px; font-weight:800; color:#0c2f66; background:#edf4ff; border-bottom:1px solid #d9e3f5; outline:none; position:relative }
       .section summary::before{ content:""; position:absolute; left:14px; top:50%; transform:translateY(-50%); width:0; height:0; border-style:solid; border-width:6px 0 6px 8px; border-color:transparent transparent transparent #0b2a5d; transition: transform .18s ease }
       .section[open] summary::before{ transform:translateY(-50%) rotate(90deg) }
       .section[open] summary{ background:#dce9ff }
@@ -137,20 +127,20 @@
 
   <body>
     <header class="container header">
-      <a class="top-button" href="https://ilonafridman.github.io/ProstateCare.github.io/careteam.html">Your Care Team</a>
-      <a class="top-button" href="https://ilonafridman.github.io/ProstateCare.github.io/information.html">Helpful Information Online</a>
+      <a class="top-button" href="./careteam.html">Your Care Team</a>
+      <a class="top-button" href="./information.html">Helpful Information Online</a>
     </header>
 
     <!-- BLOCKING Instructions Window -->
     <div class="modal intro-window" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" aria-hidden="true">
-      <div class="modal-backdrop" aria-hidden="true"></div>
+      <div class="modal-backdrop" data-intro-close aria-hidden="true"></div>
       <div class="modal-card" role="document">
         <button class="icon-btn close" aria-label="Close instructions window" data-intro-close>✕</button>
 
         <div class="intro-layout">
           <div class="intro-copy">
             <h1 id="introTitle">The guide for your cancer journey</h1>
-            <p>
+            <p class="lede">
               Finding out you have cancer can feel confusing and scary. It might seem like you're getting lots of puzzle pieces of
               information and it's hard to see the whole picture.
             </p>
@@ -160,7 +150,7 @@
               <li>Questions to help you talk to your doctors and nurses.</li>
               <li>Good websites with safe and helpful information.</li>
             </ul>
-            <p><strong>You're in control.</strong> Explore the section that feels right for you, or select "Start Here" to see a shorter list of questions.</p>
+            <p><strong>You're in control.</strong> Explore the section that feels right for you, or select “Start Here” to see a shorter list of questions.</p>
 
             <div class="intro-actions" role="group" aria-label="Instructions actions">
               <button class="btn btn-primary" type="button" data-intro-close>Explore here</button>
@@ -170,7 +160,7 @@
 
           <figure class="intro-media" aria-label="Prostate cancer information booklets">
             <img
-              src="https://ilonafridman.github.io/ProstateCare.github.io/ProstateBooklets.png"
+              src="./ProstateBooklets.png"
               alt="A set of prostate cancer information booklets laid out together."
               loading="eager"
               decoding="async"
@@ -184,7 +174,7 @@
     <main class="container grid" aria-label="Topics">
       <div class="card">
         <a class="thumb" href="#" data-open="startModal" aria-haspopup="dialog" aria-controls="startModal">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/Starthere.jpg" alt="People jogging with the word Start on the track" />
+          <img src="./Starthere.jpg" alt="People jogging with the word Start on the track" />
         </a>
         <div class="card-title">
           <a href="#" data-open="startModal" aria-haspopup="dialog" aria-controls="startModal">Start Here</a>
@@ -193,47 +183,47 @@
       </div>
 
       <div class="card">
-        <a class="thumb" href="https://ilonafridman.github.io/ProstateCare.github.io/diagnosis/diagnosis.html">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/AfterDiagnosis.jpg" alt="After diagnosis image" />
+        <a class="thumb" href="./diagnosis/diagnosis.html">
+          <img src="./AfterDiagnosis.jpg" alt="After diagnosis image" />
         </a>
         <div class="card-title">
-          <a href="https://ilonafridman.github.io/ProstateCare.github.io/diagnosis/diagnosis.html">Questions to ask after being diagnosed</a>
+          <a href="./diagnosis/diagnosis.html">Questions to ask after being diagnosed</a>
         </div>
       </div>
 
       <div class="card">
-        <a class="thumb" href="https://ilonafridman.github.io/ProstateCare.github.io/choosingtreatment/choosingtreatment.html">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/ChoosingTreatment.png" alt="Choosing treatment image" />
+        <a class="thumb" href="./choosingtreatment/choosingtreatment.html">
+          <img src="./ChoosingTreatment.png" alt="Choosing treatment image" />
         </a>
         <div class="card-title">
-          <a href="https://ilonafridman.github.io/ProstateCare.github.io/choosingtreatment/choosingtreatment.html">Questions to explore when choosing treatment</a>
+          <a href="./choosingtreatment/choosingtreatment.html">Questions to explore when choosing treatment</a>
         </div>
       </div>
 
       <div class="card">
-        <a class="thumb" href="https://ilonafridman.github.io/ProstateCare.github.io/treatment/treatment.html">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/DuringTreatment.png" alt="During treatment image" />
+        <a class="thumb" href="./treatment/treatment.html">
+          <img src="./DuringTreatment.png" alt="During treatment image" />
         </a>
         <div class="card-title">
-          <a href="https://ilonafridman.github.io/ProstateCare.github.io/treatment/treatment.html">Questions to ask during treatment</a>
+          <a href="./treatment/treatment.html">Questions to ask during treatment</a>
         </div>
       </div>
 
       <div class="card">
-        <a class="thumb" href="https://ilonafridman.github.io/ProstateCare.github.io/aftertreatment/aftertreatment.html">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/AfterTreatment.png" alt="After treatment image" />
+        <a class="thumb" href="./aftertreatment/aftertreatment.html">
+          <img src="./AfterTreatment.png" alt="After treatment image" />
         </a>
         <div class="card-title">
-          <a href="https://ilonafridman.github.io/ProstateCare.github.io/aftertreatment/aftertreatment.html">Questions to ask after treatment</a>
+          <a href="./aftertreatment/aftertreatment.html">Questions to ask after treatment</a>
         </div>
       </div>
 
       <div class="card">
-        <a class="thumb" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementary.html">
-          <img src="https://ilonafridman.github.io/ProstateCare.github.io/Complementary Therapy.jpg" alt="Complementary therapy image" />
+        <a class="thumb" href="./complementary/complementary.html">
+          <img src="./Complementary%20Therapy.jpg" alt="Complementary therapy image" />
         </a>
         <div class="card-title">
-          <a href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementary.html">Questions to ask about integrative therapy</a>
+          <a href="./complementary/complementary.html">Questions to ask about integrative therapy</a>
         </div>
       </div>
     </main>
@@ -244,21 +234,21 @@
     </button>
 
     <!-- Start Here Modal -->
-    <div class="modal start-modal" id="startModal" role="dialog" aria-modal="true" aria-labelledby="startModalTitle" aria-hidden="true">
-      <div class="modal-backdrop" aria-hidden="true"></div>
+    <div class="modal start-modal" id="startModal" role="dialog" aria-modal="true" aria-labelledby="startModalHeading" aria-hidden="true">
+      <div class="modal-backdrop" data-close="startModal" aria-hidden="true"></div>
       <div class="modal-card" role="document">
         <button class="icon-btn close" aria-label="Close dialog" data-close="startModal">✕</button>
 
         <div class="modal-header" aria-describedby="startModalIntro">
-          <h2 id="startModalTitle">Questions to ask your provider</h2>
+          <h2 id="startModalHeading">Questions to ask your provider</h2>
           <div id="startModalIntro" class="lede-panel">
-            <p>Many patients wonder, 'What should I ask my provider? How can I move forward?'</p>
-           <ul>
-    <li><strong>Pick your questions:</strong> Open a section and check the box next to any question to bring to your doctors and nurses.</li>
-    <li><strong>Get your list:</strong> You can download or print the questions you picked.</li>
-    <li><strong>Learn more:</strong> You can also explore the helpful websites by selecting eResources within each section.</li>
-  </ul>
-            <h3 id="startModalTitle">Choose 3–5 questions for your next appointment</h3>
+            <p>Many patients wonder, “What should I ask my provider? How can I move forward?”</p>
+            <ul>
+              <li><strong>Pick your questions:</strong> Open a section and check the box next to any question to bring to your doctors and nurses.</li>
+              <li><strong>Get your list:</strong> You can download or print the questions you picked.</li>
+              <li><strong>Learn more:</strong> You can also explore the helpful websites by selecting eResources within each section.</li>
+            </ul>
+            <h3>Choose 3–5 questions for your next appointment</h3>
           </div>
         </div>
 
@@ -266,18 +256,18 @@
 
         <div class="modal-footer">
           <div class="action-buttons-group">
-            <h3 id="startModalTitle">Download or print your chosen questions</h3>
+            <h3>Download or print your chosen questions</h3>
             <button id="downloadPdfBtn" class="mini" type="button">Download PDF</button>
             <button id="printBtn" class="mini" type="button">Print</button>
           </div>
 
           <div class="links-pack">
-            <h2 id="startModalTitle">More questions to explore</h2>
-            <a class="secondary" href="https://ilonafridman.github.io/ProstateCare.github.io/diagnosis/diagnosis.html">After being diagnosed</a>
-            <a class="secondary" href="https://ilonafridman.github.io/ProstateCare.github.io/choosingtreatment/choosingtreatment.html">Choosing treatment</a>
-            <a class="secondary" href="https://ilonafridman.github.io/ProstateCare.github.io/treatment/treatment.html">During treatment</a>
-            <a class="secondary" href="https://ilonafridman.github.io/ProstateCare.github.io/aftertreatment/aftertreatment.html">After treatment</a>
-            <a class="secondary" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementary.html">About integrative therapy</a>
+            <h2>More questions to explore</h2>
+            <a class="secondary" href="./diagnosis/diagnosis.html">After being diagnosed</a>
+            <a class="secondary" href="./choosingtreatment/choosingtreatment.html">Choosing treatment</a>
+            <a class="secondary" href="./treatment/treatment.html">During treatment</a>
+            <a class="secondary" href="./aftertreatment/aftertreatment.html">After treatment</a>
+            <a class="secondary" href="./complementary/complementary.html">About integrative therapy</a>
           </div>
         </div>
       </div>
@@ -288,22 +278,18 @@
     <!-- Modal handlers -->
     <script>
       (function () {
-        // WHY sessionStorage? Show intro once per browser session; show again only after user leaves/ends session.
+        // Show Instructions once per browser session.
         const INTRO_KEY = 'cq_intro_seen_session_v1';
         const storage = window.sessionStorage;
 
-        const hasSeenIntro = () => {
-          try { return storage.getItem(INTRO_KEY) === '1'; } catch { return false; }
-        };
-        const markIntroSeen = () => {
-          try { storage.setItem(INTRO_KEY, '1'); } catch {}
-        };
+        const hasSeenIntro = () => { try { return storage.getItem(INTRO_KEY) === '1'; } catch { return false; } };
+        const markIntroSeen = () => { try { storage.setItem(INTRO_KEY, '1'); } catch {} };
 
         let focusTrapHandler = null;
 
         function trapFocus(root) {
           const FOCUSABLE = 'a[href], area[href], input, select, textarea, button, summary, [tabindex]:not([tabindex="-1"])';
-          const nodes = () => Array.from(root.querySelectorAll(FOCUSABLE)).filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+          const nodes = () => Array.from(root.querySelectorAll(FOCUSABLE)).filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
           function onFocusIn(e) {
             if (!root.contains(e.target)) {
               const list = nodes();
@@ -336,7 +322,7 @@
           el.setAttribute('aria-hidden', 'false');
           document.body.classList.add('modal-open');
           const first = el.querySelector('button,[href],input,summary,[tabindex]:not([tabindex="-1"])');
-          if (first) first.focus();
+          if (first) first.focus({preventScroll:true});
           trapFocus(el);
         }
 
@@ -345,9 +331,7 @@
           if (!el) return;
           el.setAttribute('aria-hidden', 'true');
 
-          if (id === 'introModal') {
-            markIntroSeen(); // ensure we never show it again this session
-          }
+          if (id === 'introModal') markIntroSeen();
 
           releaseFocusTrap();
           const anyOpen = document.querySelector('.modal[aria-hidden="false"]');
@@ -356,17 +340,14 @@
 
         function escClose(e) {
           if (e.key === 'Escape') {
-            const openModals = Array.from(document.querySelectorAll('.modal[aria-hidden="false"]'));
-            if (openModals.some(m => m.id === 'introModal')) {
-              markIntroSeen();
-            }
-            openModals.forEach(m => m.setAttribute('aria-hidden', 'true'));
+            document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m => m.setAttribute('aria-hidden', 'true'));
+            markIntroSeen(); // if intro was open, consider it seen
             releaseFocusTrap();
             document.body.classList.remove('modal-open');
           }
         }
 
-        // Open Start Here
+        // Open Start Here (from cards, buttons, or instructions)
         document.addEventListener('click', (e) => {
           const openBtn = e.target.closest('[data-open="startModal"]');
           if (openBtn) {
@@ -377,7 +358,7 @@
           }
         });
 
-        // Close Intro via dedicated buttons
+        // Close Intro (X button or backdrop)
         document.addEventListener('click', (e) => {
           const closeIntro = e.target.closest('[data-intro-close]');
           if (closeIntro) {
@@ -387,7 +368,7 @@
           }
         });
 
-        // Generic close for other modals
+        // Generic close for other modals (X or backdrop with data-close)
         document.addEventListener('click', (e) => {
           const btn = e.target.closest('[data-close]');
           if (btn) {
@@ -396,36 +377,42 @@
           }
         });
 
+        // Back to instructions FAB
         const back = document.getElementById('backToInstructions');
         if (back) back.addEventListener('click', () => { closeModal('startModal'); openModal('introModal'); });
 
         document.addEventListener('keydown', escClose);
 
-        // Mark as seen when navigating within same origin (prevents re-open when returning from other pages)
+        // Mark instructions as seen when navigating within same origin
         function isSameOrigin(href) {
           try { return new URL(href, location.href).origin === location.origin; } catch { return false; }
         }
         document.addEventListener('click', (e) => {
           const a = e.target.closest('a[href]');
           if (!a) return;
-          if (isSameOrigin(a.getAttribute('href') || a.href)) {
-            markIntroSeen();
-          }
+          if (isSameOrigin(a.getAttribute('href') || a.href)) markIntroSeen();
         });
 
-        // On first view this session: open intro once, then mark seen immediately.
+        // Initial show logic
         function handleInitialShow() {
-          const intro = document.getElementById('introModal');
+          // If deep-linked with #start, open Start modal and remove hash; skip intro entirely.
+          if (location.hash.toLowerCase() === '#start') {
+            if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+            markIntroSeen();
+            openModal('startModal');
+            return;
+          }
+          // Otherwise, show intro once per session
           if (!hasSeenIntro()) {
             openModal('introModal');
-            markIntroSeen(); // if user navigates away without closing, it won't pop again this session
+            // mark immediately so it won’t re-open on quick nav
+            markIntroSeen();
           } else {
-            if (intro) intro.setAttribute('aria-hidden', 'true');
+            document.getElementById('introModal')?.setAttribute('aria-hidden','true');
             document.body.classList.remove('modal-open');
           }
         }
 
-        // Run on normal load AND on BFCache restore (back/forward)
         window.addEventListener('DOMContentLoaded', handleInitialShow);
         window.addEventListener('pageshow', handleInitialShow);
       })();
@@ -451,7 +438,7 @@
             "What treatment options do I have?",
             "Which treatment gives the lowest chance of the cancer coming back?",
             "If you were in my place, which treatment would you choose?",
-            "What happens if I decide not to have surgery, radiation, or hormonetherapy?",
+            "What happens if I decide not to have surgery, radiation, or hormone therapy?",
             "How soon do I need to start treatment?",
             "Do I have time to get a second opinion?",
             "What are my surgery options?",
@@ -496,11 +483,11 @@
       };
 
       const ER_LINKS = {
-        diagnosis: "https://ilonafridman.github.io/ProstateCare.github.io/diagnosis/diagnosisinfo.html",
-        choosing: "https://ilonafridman.github.io/ProstateCare.github.io/choosingtreatment/choosingtreatmentinfo.html",
-        during: "https://ilonafridman.github.io/ProstateCare.github.io/treatment/treatmentinfo.html",
-        after: "https://ilonafridman.github.io/ProstateCare.github.io/aftertreatment/aftertreatmentinfo.html",
-        integrative: "https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementaryinfo.html"
+        diagnosis: "./diagnosis/diagnosisinfo.html",
+        choosing: "./choosingtreatment/choosingtreatmentinfo.html",
+        during: "./treatment/treatmentinfo.html",
+        after: "./aftertreatment/aftertreatmentinfo.html",
+        integrative: "./complementary/complementaryinfo.html"
       };
 
       const RECOMMENDATIONS = [
@@ -593,7 +580,7 @@
       function handoutHTML(grouped) {
         const instructions = `
           <div class="panel">
-            <p>Here are the questions you choose to ask your doctors.</p>
+            <p>Here are the questions you chose to ask your doctors.</p>
             <ul>
               <li>Your doctors and nurses are happy to answer your questions. Don’t hesitate to ask!</li>
               <li>It's okay to ask different doctors for help. Each one is an expert on a different part of your care—reach more than one expert!</li>
@@ -720,7 +707,6 @@
         w.document.close();
       }
 
-      // Wire up after DOM is ready so buttons exist
       window.addEventListener("DOMContentLoaded", () => {
         buildSections();
         document.getElementById("downloadPdfBtn").addEventListener("click", downloadSelectedAsPDF);
