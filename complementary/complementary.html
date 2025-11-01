@@ -15,27 +15,28 @@
   .layout{display:grid;grid-template-columns:1fr 380px;gap:42px;align-items:start}
 
   /* ==== HOME BUTTON – styles ==== */
-.home-link{
-  position:fixed; inset:14px auto auto 14px; z-index:50; display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; border-radius:10px; background:#fff; border:1px solid var(--line); box-shadow:0 6px 16px rgba(0,0,0,.12); text-decoration:none;
-}
-.home-link:hover{transform:translateY(-1px)}
-.home-link:focus-visible{outline:none;box-shadow:var(--ring)}
-.home-link svg{width:22px;height:22px;fill:#374151}
-/* ==== HOME BUTTON – styles END ==== */
-    h1.slide-title {
-        font-size: clamp(2rem, 2.2vw + 1.2rem, 2.75rem);
-        line-height: 1.2;
-        margin: 0 0 0.5rem;
-        font-weight: 800;
-      }
-      h2.slide-title {
-        font-size: clamp(1.25rem, 1.2vw + 0.9rem, 1.75rem);
-        line-height: 1.3;
-        margin: 0 0 1rem;
-        font-weight: 600;
-      }
+  .home-link{
+    position:fixed; inset:14px auto auto 14px; z-index:50; display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px; background:#fff; border:1px solid var(--line); box-shadow:0 6px 16px rgba(0,0,0,.12); text-decoration:none;
+  }
+  .home-link:hover{transform:translateY(-1px)}
+  .home-link:focus-visible{outline:none;box-shadow:var(--ring)}
+  .home-link svg{width:22px;height:22px;fill:#374151}
+  /* ==== HOME BUTTON – styles END ==== */
 
+  /* Slide heading */
+  h1.slide-title {
+    font-size: clamp(2rem, 2.2vw + 1.2rem, 2.75rem);
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+  }
+  h2.slide-title {
+    font-size: clamp(1.25rem, 1.2vw + 0.9rem, 1.75rem);
+    line-height: 1.3;
+    margin: 0 0 1rem;
+    font-weight: 600;
+  }
 
   /* Toolbar */
   .toolbar{display:flex;gap:8px;align-items:center;margin:0 0 12px 0}
@@ -46,14 +47,8 @@
   }
   .tool-btn:hover{background:#eef1f5;transform:translateY(-1px)}
   .tool-btn:focus-visible{outline:none;box-shadow:var(--ring)}
-  .tool-btn[disabled] {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  .tool-btn[disabled]:hover {
-    transform: none;
-    background-color: #f5f6f8;
-  }
+  .tool-btn[disabled]{opacity:.6;cursor:not-allowed}
+  .tool-btn[disabled]:hover{transform:none;background-color:#f5f6f8}
 
   /* LEFT (Accordion) */
   .stack{display:flex;flex-direction:column;gap:14px;min-width:300px}
@@ -64,21 +59,12 @@
     text-align:left;position:relative;transition:background-color .15s,transform .06s;
     font-size:22px;
   }
- .acc-header::before{
-  content:"▸";                 /* right-pointing caret */
-  position:absolute;
-  left:14px; top:50%;
-  transform:translateY(-50%);
-  font-size:35px;
-  color:#4b5563;               /* dark gray, darker than panel */
-  opacity:.95;
-}
-
-/* Open: arrow faces down */
-.acc-header[aria-expanded="true"]::before{
-  content:"▾";                 /* down-pointing caret */
-}
-  .acc-header[aria-expanded="true"]::before{ transform:translateY(-50%) rotate(0deg) }
+  .acc-header::before{
+    content:"▸";
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    font-size:35px; color:#4b5563; opacity:.95;
+  }
+  .acc-header[aria-expanded="true"]::before{ content:"▾" }
   .acc-header:hover{background:var(--panel-hover);transform:translateY(-1px)}
   .acc-header:focus-visible{outline:none;box-shadow:var(--ring)}
   .acc-header .cat-icon{width:26px;height:26px;flex:0 0 26px;}
@@ -92,7 +78,7 @@
 
   /* RIGHT (actions) */
   .side{display:flex;flex-direction:column;gap:14px}
-  
+
   /* Main blue action buttons */
   .cta{
     display:inline-block;text-decoration:none;color:#fff;font-weight:700;font-size:18px;
@@ -106,13 +92,7 @@
   .cta:focus-visible{outline:none;box-shadow:var(--ring)}
   .cta[disabled]{opacity:.55;cursor:not-allowed;filter:grayscale(0.35)}
 
-  /* Style for tool buttons in the side panel */
-  .side .tool-btn {
-    width: 100%;
-    font-size: 18px;
-    padding: 14px 18px;
-    text-align: center;
-  }
+  .side .tool-btn{ width:100%; font-size:18px; padding:14px 18px; text-align:center }
 
   .pic-wrap{width:100%;max-width:340px;margin-top:6px}
   .pic{width:100%;height:auto;border:2px solid #c9ced6;border-radius:10px;display:block}
@@ -120,24 +100,20 @@
   .hint{font-size:14px;color:#374151}
 
   /* Hidden handout container for PDF/print/email rendering */
-  .print-stage{position:fixed;left:-10000px;top:-10000px;width:794px; /* ~A4 width at 96dpi */ padding:24px;background:#fff}
+  .print-stage{position:fixed;left:-10000px;top:-10000px;width:794px;padding:24px;background:#fff}
 
-  /* Handout outline styling (matches your screenshot) */
-  .handout{
-    font-family: Arial, Helvetica, sans-serif; color:#0f172a; line-height:1.55; font-size:18px;
-  }
-  .handout .frame{
-    border:6px solid #6aa1cc; border-radius:36px; padding:16px; 
-  }
+  /* Handout outline styling (MATCHES CODE 1) */
+  .handout{ font-family: Arial, Helvetica, sans-serif; color:#0f172a; line-height:1.55; font-size:18px; }
+  .handout .frame{ border:6px solid #6aa1cc; border-radius:36px; padding:16px; }
   .handout .chip{
     display:block;text-align:center;font-weight:700;font-size:22px;color:#1b4e73;
     background:#e8f3ff;border:4px solid #6aa1cc;border-radius:16px;padding:10px 14px;margin:8px auto 14px; width:fit-content; min-width:340px;
   }
-  .handout .panel{
-    border:6px solid #6aa1cc;border-radius:28px;padding:16px;min-height:160px;
-  }
+  .handout .panel{ border:6px solid #6aa1cc;border-radius:28px;padding:16px;min-height:160px; }
+  .handout h4{ margin:0 0 8px; font-size:18px; }
   .handout ul{margin:0;padding-left:22px}
   .handout li{margin:8px 0}
+
   @media (max-width:760px){
     .layout{grid-template-columns:1fr;gap:28px}
     .side .cta{width:100%;min-width:unset}
@@ -145,57 +121,50 @@
 </style>
 </head>
 <body>
-   <!-- ==== HOME BUTTON – element ==== -->
+  <!-- ==== HOME BUTTON – element ==== -->
   <a class="home-link" href="https://ilonafridman.github.io/ProstateCare.github.io/home.html" aria-label="Go to Home">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.1 2.5 10.1a1 1 0 0 0-.4.8v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-5h4v5a1 1 0 0 0 1 1h5.9a1 1 0 0 0 1-1v-9a1 1 0 0 0-.4-.8L12 3.1z"/></svg>
   </a>
-  
+
 <a id="page-top"></a>
 
 <main class="container" aria-label="Slide-like layout">
   <section class="layout">
     <div>
-
-       <!-- ADD: slide heading -->
-      
       <h1 class="slide-title">Explore Integrative Therapy</h1>
       <h2 class="slide-title">Here you will find questions to ask your doctors and online resources to learn some basic information.</h2>
-       <ul>
-    <li><strong>Step 1:</strong> Select one or more sections to see the questions.</li>
-    <li><strong>Step 2: Select 3-5 questions</strong> you want to include in your handout.</li>
-    <li><strong>Step 3: </strong> Download or print the handout to bring to your care team.</li>
-    <li><strong>Step 4:</strong> Select <strong>‘Online Resources'</strong> to find more information.</li>
-     <li><strong>Step 5:</strong> Select ‘Find integrative care providers’ to explore options available to you.</li>
-  </ul>
+      <ul>
+        <li><strong>Step 1:</strong> Select one or more sections to see the questions.</li>
+        <li><strong>Step 2: Select 3–5 questions</strong> you want to include in your handout.</li>
+        <li><strong>Step 3:</strong> Download or print the handout to bring to your care team.</li>
+        <li><strong>Step 4:</strong> Select <strong>‘Online Resources’</strong> to find more information.</li>
+        <li><strong>Step 5:</strong> Select ‘Find integrative care providers’ to explore options available to you.</li>
+      </ul>
+
       <div class="toolbar" role="group" aria-label="Expand or collapse all">
         <button id="expandAllBtn"  class="tool-btn" type="button">Expand all</button>
         <button id="collapseAllBtn" class="tool-btn" type="button">Collapse all</button>
       </div>
 
-           <div id="stack" class="stack" aria-label="Categories"></div>
-    
-    </div> <!-- close left column -->
-     
-       
+      <div id="stack" class="stack" aria-label="Categories"></div>
+    </div>
 
     <aside class="side" aria-label="Actions">
       <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/home.html">Go back to the beginning</a>
-      <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementaryinfo.html" >Online Resources</a>
-       <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/integrative.html" >Integrative therapy at a glance</a>
-        <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementaryresources.html" >Find integrative care providers</a>
+      <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementaryinfo.html">Online Resources</a>
+      <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/integrative.html">Integrative therapy at a glance</a>
+      <a class="cta" href="https://ilonafridman.github.io/ProstateCare.github.io/complementary/complementaryresources.html">Find integrative care providers</a>
 
       <div class="pic-wrap">
         <img class="pic"
              src="https://ilonafridman.github.io/ProstateCare.github.io/complementary/Patientdoctor.png"
              alt="Patient speaking with a doctor" />
       </div>
-      
-      <!-- MODIFIED: Buttons now use the .tool-btn style -->
+
       <button id="downloadPdfBtn" class="tool-btn" type="button" disabled>Download PDF</button>
       <button id="printBtn"       class="tool-btn" type="button" disabled>Print</button>
-    
-    
-    <p class="hint">Tip: Check any number of questions you’d like to include in the handout</p>
+
+      <p id="selHint" class="hint">No questions selected yet.</p>
     </aside>
   </section>
 </main>
@@ -204,7 +173,7 @@
 <div id="printStage" class="print-stage" aria-hidden="true"></div>
 
 <script>
-  // ------- Data (UPDATED) -------
+  // ------- Data -------
   const DATA = [
     { title: 'Ask a provider about evidence and safety', questions: [
       'If I am using something complementary in addition to my treatment, could it make my side effects worse?',
@@ -299,7 +268,9 @@
     document.addEventListener('change', updateActionsEnabled);
     document.getElementById('downloadPdfBtn').addEventListener('click', downloadSelectedAsPDF);
     document.getElementById('printBtn').addEventListener('click', printSelected);
-    document.getElementById('emailBtn').addEventListener('click', emailSelectedPDF);
+    // emailBtn is optional; only wire up if present
+    const emailBtn = document.getElementById('emailBtn');
+    if (emailBtn) emailBtn.addEventListener('click', emailSelectedPDF);
   })();
 
   function togglePanel(i){
@@ -327,128 +298,182 @@
     singleOpen = true;
   }
 
-  // ----- Selection helpers -----
+  // ----- Selection helpers (same as Code 1 grouping) -----
   function getSelectedQuestions(){
     return Array.from(document.querySelectorAll('.q-list input[type="checkbox"]:checked'))
       .map(cb => cb.nextElementSibling.textContent.trim());
   }
+
+  // Group selections by category for the handout
+  function getSelectedByCategory(){
+    const grouped = new Map(); // key: idx => { title, items:[] }
+    document.querySelectorAll('.q-list input[type="checkbox"]:checked').forEach(cb => {
+      const parts = cb.id.split('-'); // q-<idx>-<i>
+      const idx = parseInt(parts[1], 10);
+      const title = DATA[idx]?.title || `Section ${idx+1}`;
+      const text = cb.nextElementSibling.textContent.trim();
+      if (!grouped.has(idx)) grouped.set(idx, { title, items: [] });
+      grouped.get(idx).items.push(text);
+    });
+    return Array.from(grouped.entries())
+                .sort((a,b)=>a[0]-b[0])
+                .map(([,val])=>val);
+  }
+
   function updateActionsEnabled(){
     const count = getSelectedQuestions().length;
     const any = count > 0;
     document.getElementById('downloadPdfBtn').disabled = !any;
     document.getElementById('printBtn').disabled = !any;
-    document.getElementById('emailBtn').disabled = !any;
+    const emailBtn = document.getElementById('emailBtn');
+    if (emailBtn) emailBtn.disabled = !any;
     const hint = document.getElementById('selHint');
-    hint.textContent = any ? `${count} question${count>1?'s':''} selected.` : 'No questions selected yet.';
+    if (hint) hint.textContent = any ? `${count} question${count>1?'s':''} selected.` : 'No questions selected yet.';
   }
 
-  // ----- Handout (outlined) -----
-  function handoutHTML(selected){
-    const items = selected.map(q => `<li>${q}</li>`).join('');
-    const recs  = RECOMMENDATIONS.map(r => `<li>${r}</li>`).join('');
+  // ===== Handout (MATCHES CODE 1) =====
+  function handoutHTML(grouped){
+    const instructions = `
+      <div class="panel">
+        <p>Here are the questions you choose to ask your doctors.</p>
+        <ul>
+          <li>Your doctors and nurses are happy to answer your questions. Don’t hesitate to ask!</li>
+          <li>It's okay to ask different doctors for help. Each one is an expert on a different part of your care—reach more than one expert!</li>
+          <li>Think about your most important questions for today. If you have more than 3–5 questions, you might need more than one visit to clarify all of them.</li>
+        </ul>
+      </div>`;
+
+    let questionsHTML = '';
+    if (!grouped || !grouped.length) {
+      questionsHTML = `<div class="panel"><p>(Chosen questions appear here.)</p></div>`;
+    } else {
+      questionsHTML = grouped
+        .map(g => `<div class="panel"><h4>${g.title}</h4><ul>${g.items.map(q=>`<li>${q}</li>`).join('')}</ul></div>`)
+        .join('<div style="height:14px"></div>');
+    }
+
+    const recs = RECOMMENDATIONS.map(r => `<li>${r}</li>`).join('');
+
     return `
       <div class="handout">
         <div class="frame">
           <span class="chip">Questions that you chose</span>
-          <div class="panel">
-            ${selected.length ? `<ul>${items}</ul>` : '<p>(No questions selected)</p>'}
-          </div>
-
+          ${instructions}
+          <div style="height:14px"></div>
+          ${questionsHTML}
           <div style="height:18px"></div>
-
           <span class="chip">Recommendations that other patients found helpful</span>
-          <div class="panel">
-            <ul>${recs}</ul>
-          </div>
+          <div class="panel"><ul>${recs}</ul></div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   // Build a hidden DOM node with the handout (for html2canvas / print)
-  function buildHandoutStage(selected){
+  function buildHandoutStage(){
     const stage = document.getElementById('printStage');
-    stage.innerHTML = '';
-    const wrap = document.createElement('div');
-    wrap.className = 'handout';
-    stage.innerHTML = handoutHTML(selected);
-    return stage.firstElementChild;
+    const grouped = getSelectedByCategory();
+    stage.innerHTML = handoutHTML(grouped);
+    return stage.firstElementChild; // .handout
+  }
+
+  // ===== PDF (block-by-block pagination; SAME AS CODE 1) =====
+  async function createHandoutPDF(){
+    const any = getSelectedQuestions().length > 0;
+    if(!any) return null;
+
+    const root = buildHandoutStage();           // .handout
+    const frame = root.querySelector('.frame');
+
+    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const contentW = pageW - margin * 2;
+    const contentH = pageH - margin * 2;
+    const overlapPx = 6;
+
+    let cursorHmm = 0;
+
+    const blocks = Array.from(frame.children).filter(
+      el => el.classList.contains('chip') || el.classList.contains('panel')
+    );
+
+    for (const el of blocks) {
+      const canvas = await html2canvas(el, {
+        backgroundColor:'#ffffff',
+        scale: Math.min(2, window.devicePixelRatio || 1.5)
+      });
+
+      const pxPerMm = canvas.width / contentW;
+      const blockHmm = canvas.height / pxPerMm;
+
+      if (cursorHmm > 0 && cursorHmm + blockHmm > contentH) {
+        pdf.addPage();
+        cursorHmm = 0;
+      }
+
+      if (blockHmm <= contentH) {
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin + cursorHmm, contentW, blockHmm);
+        cursorHmm += blockHmm + 2;
+      } else {
+        let y = 0;
+        const pageContentHPx = contentH * pxPerMm;
+        while (y < canvas.height) {
+          const sliceH = Math.min(pageContentHPx, canvas.height - y);
+          const c = document.createElement('canvas');
+          c.width = canvas.width;
+          c.height = sliceH;
+          c.getContext('2d').drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+          const sliceHmm = sliceH / pxPerMm;
+
+          if (cursorHmm > 0) {
+            pdf.addPage();
+            cursorHmm = 0;
+          }
+          pdf.addImage(c.toDataURL('image/png'), 'PNG', margin, margin + cursorHmm, contentW, sliceHmm);
+          y += sliceH - overlapPx;
+          if (y < canvas.height) {
+            pdf.addPage();
+            cursorHmm = 0;
+          }
+        }
+        cursorHmm = 2;
+      }
+    }
+    return pdf;
   }
 
   // ----- Download as PDF -----
   async function downloadSelectedAsPDF(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
-    const node = buildHandoutStage(selected);
-    const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
-    const img = canvas.toDataURL('image/png');
-    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const imgW = pageW;
-    const imgH = canvas.height * (imgW / canvas.width);
-    const pageH = pdf.internal.pageSize.getHeight();
-
-    if (imgH <= pageH){ pdf.addImage(img,'PNG',0,0,imgW,imgH); }
-    else{
-      let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm;
-      while (y < canvas.height){
-        const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y);
-        c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height);
-        const data = c.toDataURL('image/png');
-        if (y) pdf.addPage();
-        pdf.addImage(data,'PNG',0,0,imgW,pageH);
-        y += pageHPx;
-      }
-    }
+    const pdf = await createHandoutPDF();
+    if (!pdf) return;
     pdf.save('questions-handout.pdf');
   }
 
-  // ----- Print (same outline) -----
+  // ----- Print (same outline; grouped by category) -----
   function printSelected(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
+    const any = getSelectedQuestions().length > 0;
+    if(!any) return;
+    const grouped = getSelectedByCategory();
     const html = `
       <!doctype html><html><head><meta charset="utf-8">
       <title>Questions Handout</title>
       <style>${document.querySelector('style').innerHTML}</style>
       </head><body onload="window.print()">
-        <div style="padding:24px;max-width:850px;margin:0 auto">${handoutHTML(selected)}</div>
+        <div style="padding:24px;max-width:850px;margin:0 auto">${handoutHTML(grouped)}</div>
       </body></html>`;
     const w = window.open('', '_blank');
     w.document.open(); w.document.write(html); w.document.close();
   }
 
-  // ----- Email (attach PDF if Web Share API is supported; otherwise fallback) -----
+  // ----- Email (optional; uses the same PDF builder) -----
   async function emailSelectedPDF(){
-    const selected = getSelectedQuestions();
-    if(!selected.length) return;
+    const pdf = await createHandoutPDF();
+    if (!pdf) return;
 
-    // Generate PDF blob
-    const node = buildHandoutStage(selected);
-    const canvas = await html2canvas(node, { backgroundColor:'#ffffff', scale:Math.min(2, window.devicePixelRatio||1.5) });
-    const data = canvas.toDataURL('image/png');
-    const pdf = new window.jspdf.jsPDF({ unit:'mm', format:'a4', compress:true });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const imgW = pageW;
-    const imgH = canvas.height * (imgW / canvas.width);
-    const pageH = pdf.internal.pageSize.getHeight();
-
-    if (imgH <= pageH){ pdf.addImage(data,'PNG',0,0,imgW,imgH); }
-    else{
-      let y=0, pxPerMm = canvas.width / imgW, pageHPx = pageH * pxPerMm;
-      while (y < canvas.height){
-        const c = document.createElement('canvas'); c.width = canvas.width; c.height = Math.min(pageHPx, canvas.height - y);
-        c.getContext('2d').drawImage(canvas,0,y,canvas.width,c.height,0,0,canvas.width,c.height);
-        const slice = c.toDataURL('image/png');
-        if (y) pdf.addPage();
-        pdf.addImage(slice,'PNG',0,0,imgW,pageH);
-        y += pageHPx;
-      }
-    }
     const blob = pdf.output('blob');
     const file = new File([blob], 'questions-handout.pdf', {type:'application/pdf'});
 
-    // Try Web Share with file
     if (navigator.canShare && navigator.canShare({ files:[file] })){
       await navigator.share({
         files:[file],
@@ -458,11 +483,11 @@
       return;
     }
 
-    // Fallback: download + mailto note
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'questions-handout.pdf'; a.click();
     URL.revokeObjectURL(url);
+
     const body = encodeURIComponent(
       'Attached is my Questions Handout (PDF). If the attachment did not appear, I just downloaded it—please see the downloaded file.'
     );
