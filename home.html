@@ -6,92 +6,85 @@
     <title>Care Questions — Home</title>
 
     <style>
-      :root {
-        --bg: #f6f9fc;
-        --card: #ffffff;
-        --ink: #0f172a;
-        --muted: #475569;
-        --ring: rgba(59, 130, 246, 0.45);
-        --shadow: 0 10px 25px rgba(2, 8, 23, 0.12), 0 2px 6px rgba(2, 8, 23, 0.08);
-        --radius: 20px;
-        --brand: #2563eb;
-        --brand-strong: #1d4ed8;
+      :root{
+        --bg:#f6f9fc; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+        --ring:rgba(59,130,246,.45); --shadow:0 10px 25px rgba(2,8,23,.12), 0 2px 6px rgba(2,8,23,.08);
+        --radius:20px; --brand:#2563eb; --brand-strong:#1d4ed8;
       }
-
-      * { box-sizing: border-box }
-      html, body { height: 100% }
-      body {
-        margin: 0;
-        font-family: Arial, ui-sans-serif, system-ui, -apple-system, "Helvetica Neue";
-        font-size: 17px; color: var(--ink); background: var(--bg);
+      *{ box-sizing:border-box }
+      html,body{ height:100% }
+      body{
+        margin:0; font-family:Arial, ui-sans-serif, system-ui, -apple-system, "Helvetica Neue";
+        font-size:17px; color:var(--ink); background:var(--bg);
       }
-      body.modal-open { overflow: hidden }
+      body.modal-open{ overflow:hidden }
 
-      .container { max-width: 1200px; margin: 20px auto; padding: 0 16px }
-      .header { display: flex; gap: 16px; justify-content: flex-end; align-items: center; margin-bottom: 8px }
+      .container{ max-width:1200px; margin:20px auto; padding:0 16px }
+      .header{ display:flex; gap:16px; justify-content:flex-end; align-items:center; margin-bottom:8px }
+
+      /* Top buttons + make fonts consistent with primary button */
       .top-button{
-        background: linear-gradient(180deg,#6ea2cf,#588fbe); color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.2);
-        border:3px solid #fff; outline:1px solid #c7d9ea; text-decoration:none; padding:14px 22px; border-radius:14px; font-weight:700;
-        box-shadow: var(--shadow); transition: transform .06s ease, filter .15s ease;
+        background:linear-gradient(180deg,#6ea2cf,#588fbe); color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.2);
+        border:3px solid #fff; outline:1px solid #c7d9ea; text-decoration:none; padding:14px 22px; border-radius:14px;
+        box-shadow:var(--shadow); transition:transform .06s ease, filter .15s ease;
+        font-family:inherit; font-weight:800; line-height:1;
       }
-      .top-button:hover { filter: brightness(1.05); transform: translateY(-1px) }
-      .top-button:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px }
+      .top-button:hover{ filter:brightness(1.05); transform:translateY(-1px) }
+      .top-button:focus-visible{ outline:3px solid var(--ring); outline-offset:3px }
+
+      /* Also enforce same font on the blue primary CTA button in the intro */
+      .btn, .btn-primary, .btn-secondary{ font-family:inherit; font-weight:800 }
 
       /* Cards */
-      .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px }
-      .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 12px; min-height: 220px; border: 1px solid #e5e7eb }
-      .thumb { width: 100%; height: 160px; border-radius: 14px; background: #e9eef5; margin-bottom: 12px; overflow: hidden; display: block }
-      .thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
-      .card-title a { display:inline-block; text-decoration:none; color:inherit; font-weight:800 }
-      .card-title { font-size: 20px; font-weight: 800; line-height: 1.2 }
+      .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px }
+      .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:12px; min-height:220px; border:1px solid #e5e7eb }
+      .thumb{ width:100%; height:160px; border-radius:14px; background:#e9eef5; margin-bottom:12px; overflow:hidden; display:block }
+      .thumb img{ width:100%; height:100%; object-fit:cover; display:block }
+      .card-title a{ display:inline-block; text-decoration:none; color:inherit; font-weight:800 }
+      .card-title{ font-size:20px; font-weight:800; line-height:1.2 }
+      .card-desc{ font-size:15px; color:var(--muted); margin-top:6px; line-height:1.35 }
       @media (max-width:900px){ .grid{ grid-template-columns:1fr 1fr } }
       @media (max-width:640px){ .grid{ grid-template-columns:1fr } .header{ justify-content:center } }
 
       /* Modal base */
-      .modal { position: fixed; inset: 0; display: none; z-index: 999 }
-      .modal[aria-hidden="false"] { display: block }
-      .modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(4px) }
-      .icon-btn.close { position: absolute; right: 10px; top: 10px; background: #efefef; border: none; border-radius: 999px; width: 36px; height: 36px; cursor: pointer }
+      .modal{ position:fixed; inset:0; display:none; z-index:999 }
+      .modal[aria-hidden="false"]{ display:block }
+      .modal-backdrop{ position:absolute; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(4px) }
+      .icon-btn.close{ position:absolute; right:10px; top:10px; background:#efefef; border:none; border-radius:999px; width:36px; height:36px; cursor:pointer }
 
-      /* Instructions window (blocking) */
-      .intro-window .modal-card {
-        position: relative; max-width: 980px; margin: 7vh auto; background: var(--card);
-        border-radius: 22px; box-shadow: var(--shadow); padding: 20px; border: 1px solid #e5e7eb;
-        max-height: 84vh; overflow: auto;
+      /* Instructions window */
+      .intro-window .modal-card{
+        position:relative; max-width:980px; margin:7vh auto; background:var(--card);
+        border-radius:22px; box-shadow:var(--shadow); padding:20px; border:1px solid #e5e7eb;
+        max-height:84vh; overflow:auto;
       }
+      .intro-layout{ display:grid; gap:16px; grid-template-columns:1fr; align-items:start }
+      @media (min-width:768px){ .intro-layout{ grid-template-columns:1.3fr 1fr } }
+      .intro-copy h1{ margin:2px 0 10px; font-size:28px; line-height:1.2 }
+      .intro-copy .lede{ color:var(--muted); margin:0 0 12px }
+      .intro-copy ul{ margin:10px 0 8px 22px }
+      .intro-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
 
-      .intro-layout { display: grid; gap: 16px; grid-template-columns: 1fr; align-items: start }
-      @media (min-width:768px){ .intro-layout { grid-template-columns: 1.3fr 1fr } }
-      .intro-copy h1 { margin: 2px 0 10px; font-size: 28px; line-height: 1.2 }
-      .intro-copy .lede { color: var(--muted); margin: 0 0 12px }
-      .intro-copy ul { margin: 10px 0 8px 22px }
-      .intro-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
-
-      .btn {
-        display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; line-height:1;
+      .btn{
+        display:inline-flex; align-items:center; gap:10px; text-decoration:none; line-height:1;
         border-radius:12px; padding:12px 16px; border:1px solid transparent; cursor:pointer;
       }
-      .btn-primary { background: linear-gradient(180deg,var(--brand),var(--brand-strong)); color:#fff; box-shadow: var(--shadow) }
-      .btn-secondary { background: #f1f5f9; color: #0b2a5d; border: 1px solid #c7d9ea }
+      .btn-primary{ background:linear-gradient(180deg,var(--brand),var(--brand-strong)); color:#fff; box-shadow:var(--shadow) }
+      .btn-secondary{ background:#f1f5f9; color:#0b2a5d; border:1px solid #c7d9ea }
 
-      .intro-media {
-        width: 100%; height: 100%; min-height: 220px;
-        background:#f7fafc; border:1px solid #e5e7eb; border-radius:16px;
-        overflow:hidden; box-shadow:0 2px 10px rgba(2,8,23,.06)
-      }
-      .intro-media img { width: 100%; height: 100%; object-fit: cover; display: block }
+      .intro-media{ width:100%; height:100%; min-height:220px; background:#f7fafc; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(2,8,23,.06) }
+      .intro-media img{ width:100%; height:100%; object-fit:cover; display:block }
 
       /* Start modal */
-      .start-modal .modal-card {
-        position: relative; max-width: 960px; margin: 6vh auto; background: var(--card);
-        border-radius: 22px; box-shadow: var(--shadow); padding: 24px 22px 16px; border: 1px solid #e5e7eb;
-        max-height: 85vh; overflow-y: auto;
+      .start-modal .modal-card{
+        position:relative; max-width:960px; margin:6vh auto; background:var(--card); border-radius:22px;
+        box-shadow:var(--shadow); padding:24px 22px 16px; border:1px solid #e5e7eb; max-height:85vh; overflow-y:auto;
       }
-      .modal-header h2 { margin: 4px 0 8px; font-size: 28px }
-      .lede { color: var(--muted); margin: 0 0 14px; font-size: 16px }
-      .accordion { display: flex; flex-direction: column; gap: 12px }
-      .section { border:1px solid #d9e3f5; border-radius:16px; background:#f7fbff; overflow:hidden }
-      .section summary { list-style:none; cursor:pointer; padding:12px 16px 12px 36px; font-weight:800; color:#0c2f66; background:#edf4ff; border-bottom:1px solid #d9e3f5; outline:none; position:relative }
+      .modal-header h2{ margin:4px 0 8px; font-size:28px }
+      .lede{ color:var(--muted); margin:0 0 14px; font-size:16px }
+      .accordion{ display:flex; flex-direction:column; gap:12px }
+      .section{ border:1px solid #d9e3f5; border-radius:16px; background:#f7fbff; overflow:hidden }
+      .section summary{ list-style:none; cursor:pointer; padding:12px 16px 12px 36px; font-weight:800; color:#0c2f66; background:#edf4ff; border-bottom:1px solid #d9e3f5; outline:none; position:relative }
       .section summary::before{ content:""; position:absolute; left:14px; top:50%; transform:translateY(-50%); width:0; height:0; border-style:solid; border-width:6px 0 6px 8px; border-color:transparent transparent transparent #0b2a5d; transition: transform .18s ease }
       .section[open] summary::before{ transform:translateY(-50%) rotate(90deg) }
       .section[open] summary{ background:#dce9ff }
@@ -119,8 +112,6 @@
       .handout h4{ margin:0 0 8px; font-size:18px }
       .handout ul{ margin:0; padding-left:22px }
       .handout li{ margin:8px 0 }
-      /* FAB removed */
-      .fab{ display:none; }
     </style>
   </head>
 
@@ -128,13 +119,12 @@
     <header class="container header">
       <a class="top-button" href="./careteam.html">Your Care Team</a>
       <a class="top-button" href="./information.html">Helpful Information Online</a>
-      <!-- NEW: Back to instructions in the header -->
       <button id="backToInstructionsTop" class="top-button" type="button" aria-haspopup="dialog" aria-controls="introModal">
         Back to instructions
       </button>
     </header>
 
-    <!-- BLOCKING Instructions Window -->
+    <!-- Instructions -->
     <div class="modal intro-window" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" aria-hidden="true">
       <div class="modal-backdrop" data-intro-close aria-hidden="true"></div>
       <div class="modal-card" role="document">
@@ -162,12 +152,7 @@
           </div>
 
           <figure class="intro-media" aria-label="Prostate cancer information booklets">
-            <img
-              src="./ProstateBooklets.png"
-              alt="A set of prostate cancer information booklets laid out together."
-              loading="eager"
-              decoding="async"
-            />
+            <img src="./ProstateBooklets.png" alt="A set of prostate cancer information booklets laid out together." loading="eager" decoding="async" />
           </figure>
         </div>
       </div>
@@ -189,45 +174,35 @@
         <a class="thumb" href="./diagnosis/diagnosis.html">
           <img src="./AfterDiagnosis.jpg" alt="After diagnosis image" />
         </a>
-        <div class="card-title">
-          <a href="./diagnosis/diagnosis.html">Questions to ask after being diagnosed</a>
-        </div>
+        <div class="card-title"><a href="./diagnosis/diagnosis.html">Questions to ask after being diagnosed</a></div>
       </div>
 
       <div class="card">
         <a class="thumb" href="./choosingtreatment/choosingtreatment.html">
           <img src="./ChoosingTreatment.png" alt="Choosing treatment image" />
         </a>
-        <div class="card-title">
-          <a href="./choosingtreatment/choosingtreatment.html">Questions to explore when choosing treatment</a>
-        </div>
+        <div class="card-title"><a href="./choosingtreatment/choosingtreatment.html">Questions to explore when choosing treatment</a></div>
       </div>
 
       <div class="card">
         <a class="thumb" href="./treatment/treatment.html">
           <img src="./DuringTreatment.png" alt="During treatment image" />
         </a>
-        <div class="card-title">
-          <a href="./treatment/treatment.html">Questions to ask during treatment</a>
-        </div>
+        <div class="card-title"><a href="./treatment/treatment.html">Questions to ask during treatment</a></div>
       </div>
 
       <div class="card">
         <a class="thumb" href="./aftertreatment/aftertreatment.html">
           <img src="./AfterTreatment.png" alt="After treatment image" />
         </a>
-        <div class="card-title">
-          <a href="./aftertreatment/aftertreatment.html">Questions to ask after treatment</a>
-        </div>
+        <div class="card-title"><a href="./aftertreatment/aftertreatment.html">Questions to ask after treatment</a></div>
       </div>
 
       <div class="card">
         <a class="thumb" href="./complementary/complementary.html">
           <img src="./Complementary%20Therapy.jpg" alt="Complementary therapy image" />
         </a>
-        <div class="card-title">
-          <a href="./complementary/complementary.html">Questions to ask about integrative therapy</a>
-        </div>
+        <div class="card-title"><a href="./complementary/complementary.html">Questions to ask about integrative therapy</a></div>
       </div>
     </main>
 
@@ -275,77 +250,62 @@
 
     <!-- Modal handlers -->
     <script>
-      (function () {
-        // Session flag kept (harmless if you decide to use later)
-        const INTRO_KEY = 'cq_intro_seen_session_v1';
-        const storage = window.sessionStorage;
-        const hasSeenIntro = () => { try { return storage.getItem(INTRO_KEY) === '1'; } catch { return false; } };
-        const markIntroSeen = () => { try { storage.setItem(INTRO_KEY, '1'); } catch {} };
+      (function(){
+        const INTRO_KEY='cq_intro_seen_session_v1';
+        const storage=window.sessionStorage;
+        const hasSeenIntro=()=>{ try{return storage.getItem(INTRO_KEY)==='1';}catch{return false;} };
+        const markIntroSeen=()=>{ try{storage.setItem(INTRO_KEY,'1');}catch{} };
 
-        let focusTrapHandler = null;
-
-        function trapFocus(root) {
-          const FOCUSABLE = 'a[href], area[href], input, select, textarea, button, summary, [tabindex]:not([tabindex="-1"])';
-          const nodes = () => Array.from(root.querySelectorAll(FOCUSABLE)).filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
-          function onFocusIn(e) {
-            if (!root.contains(e.target)) {
-              const list = nodes();
-              if (list.length) list[0].focus();
-            }
+        let focusTrapHandler=null;
+        function trapFocus(root){
+          const FOCUSABLE='a[href], area[href], input, select, textarea, button, summary, [tabindex]:not([tabindex="-1"])';
+          const nodes=()=>Array.from(root.querySelectorAll(FOCUSABLE)).filter(el=>!el.hasAttribute('disabled')&&el.getAttribute('aria-hidden')!=='true');
+          function onFocusIn(e){ if(!root.contains(e.target)){ const list=nodes(); if(list.length) list[0].focus(); } }
+          function onKeydown(e){
+            if(e.key!=='Tab') return;
+            const list=nodes(); if(!list.length) return;
+            const first=list[0], last=list[list.length-1];
+            if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+            else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
           }
-          function onKeydown(e) {
-            if (e.key !== 'Tab') return;
-            const list = nodes();
-            if (!list.length) return;
-            const first = list[0], last = list[list.length - 1];
-            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-          }
-          focusTrapHandler = { onFocusIn, onKeydown };
-          document.addEventListener('focusin', onFocusIn);
-          document.addEventListener('keydown', onKeydown);
+          focusTrapHandler={onFocusIn,onKeydown};
+          document.addEventListener('focusin',onFocusIn);
+          document.addEventListener('keydown',onKeydown);
+        }
+        function releaseFocusTrap(){
+          if(!focusTrapHandler) return;
+          document.removeEventListener('focusin',focusTrapHandler.onFocusIn);
+          document.removeEventListener('keydown',focusTrapHandler.onKeydown);
+          focusTrapHandler=null;
         }
 
-        function releaseFocusTrap() {
-          if (!focusTrapHandler) return;
-          document.removeEventListener('focusin', focusTrapHandler.onFocusIn);
-          document.removeEventListener('keydown', focusTrapHandler.onKeydown);
-          focusTrapHandler = null;
-        }
-
-        function openModal(id) {
-          const el = document.getElementById(id);
-          if (!el) return;
-          el.setAttribute('aria-hidden', 'false');
+        function openModal(id){
+          const el=document.getElementById(id); if(!el) return;
+          el.setAttribute('aria-hidden','false');
           document.body.classList.add('modal-open');
-          const first = el.querySelector('button,[href],input,summary,[tabindex]:not([tabindex="-1"])');
-          if (first) first.focus({preventScroll:true});
+          const first=el.querySelector('button,[href],input,summary,[tabindex]:not([tabindex="-1"])');
+          if(first) first.focus({preventScroll:true});
           trapFocus(el);
         }
-
-        function closeModal(id) {
-          const el = document.getElementById(id);
-          if (!el) return;
-          el.setAttribute('aria-hidden', 'true');
-          if (id === 'introModal') markIntroSeen();
+        function closeModal(id){
+          const el=document.getElementById(id); if(!el) return;
+          el.setAttribute('aria-hidden','true');
+          if(id==='introModal') markIntroSeen();
           releaseFocusTrap();
-          const anyOpen = document.querySelector('.modal[aria-hidden="false"]');
-          if (!anyOpen) document.body.classList.remove('modal-open');
+          const anyOpen=document.querySelector('.modal[aria-hidden="false"]');
+          if(!anyOpen) document.body.classList.remove('modal-open');
         }
-
-        function escClose(e) {
-          if (e.key === 'Escape') {
-            document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m => m.setAttribute('aria-hidden', 'true'));
-            markIntroSeen();
-            releaseFocusTrap();
-            document.body.classList.remove('modal-open');
+        function escClose(e){
+          if(e.key==='Escape'){
+            document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m=>m.setAttribute('aria-hidden','true'));
+            markIntroSeen(); releaseFocusTrap(); document.body.classList.remove('modal-open');
           }
         }
 
-        // Open Start Here (from cards, buttons, or instructions)
-        document.addEventListener('click', (e) => {
-          const openBtn = e.target.closest('[data-open="startModal"]');
-          if (openBtn) {
+        // Click: open Start modal from any trigger carrying data-open="startModal"
+        document.addEventListener('click', (e)=>{
+          const openBtn=e.target.closest('[data-open="startModal"]');
+          if(openBtn){
             e.preventDefault();
             markIntroSeen();
             closeModal('introModal');
@@ -353,69 +313,71 @@
           }
         });
 
-        // Close Intro (X button or backdrop)
-        document.addEventListener('click', (e) => {
-          const closeIntro = e.target.closest('[data-intro-close]');
-          if (closeIntro) {
-            e.preventDefault();
-            markIntroSeen();
-            closeModal('introModal');
-          }
+        // Close intro via X or backdrop
+        document.addEventListener('click', (e)=>{
+          const closeIntro=e.target.closest('[data-intro-close]');
+          if(closeIntro){ e.preventDefault(); markIntroSeen(); closeModal('introModal'); }
         });
 
-        // Generic close for other modals (X or backdrop with data-close)
-        document.addEventListener('click', (e) => {
-          const btn = e.target.closest('[data-close]');
-          if (btn) {
-            e.preventDefault();
-            closeModal(btn.getAttribute('data-close'));
-          }
+        // Generic close for other modals
+        document.addEventListener('click', (e)=>{
+          const btn=e.target.closest('[data-close]');
+          if(btn){ e.preventDefault(); closeModal(btn.getAttribute('data-close')); }
         });
 
-        // Back to instructions (HEADER button)
-        const backTop = document.getElementById('backToInstructionsTop');
-        if (backTop) backTop.addEventListener('click', () => {
-          closeModal('startModal');
-          openModal('introModal');
-        });
+        // Back to instructions (header button)
+        const backTop=document.getElementById('backToInstructionsTop');
+        if(backTop) backTop.addEventListener('click', ()=>{ closeModal('startModal'); openModal('introModal'); });
 
         document.addEventListener('keydown', escClose);
 
         // Mark instructions as seen when navigating within same origin
-        function isSameOrigin(href) {
-          try { return new URL(href, location.href).origin === location.origin; } catch { return false; }
-        }
-        document.addEventListener('click', (e) => {
-          const a = e.target.closest('a[href]');
-          if (!a) return;
-          if (isSameOrigin(a.getAttribute('href') || a.href)) markIntroSeen();
+        function isSameOrigin(href){ try{ return new URL(href, location.href).origin===location.origin; }catch{ return false; } }
+        document.addEventListener('click', (e)=>{
+          const a=e.target.closest('a[href]'); if(!a) return;
+          if(isSameOrigin(a.getAttribute('href')||a.href)) markIntroSeen();
         });
 
-        // NOTE: No initial auto-open on load.
-        // Both modals remain closed until user clicks something.
-        document.getElementById('introModal')?.setAttribute('aria-hidden','true');
-        document.getElementById('startModal')?.setAttribute('aria-hidden','true');
-        document.body.classList.remove('modal-open');
+        // Deep-link support: /home.html#start or ?start=1
+        function wantsStartFromURL(){
+          const h=(location.hash||'').toLowerCase();
+          if(h==='#start') return true;
+          const q=new URLSearchParams(location.search);
+          return q.has('start') && q.get('start')!=='0';
+        }
+
+        function handleInitialShow(){
+          if(wantsStartFromURL()){
+            if(history.replaceState) history.replaceState(null,'',location.pathname);
+            openModal('startModal');
+          }else{
+            // keep both closed on first paint
+            document.getElementById('introModal')?.setAttribute('aria-hidden','true');
+            document.getElementById('startModal')?.setAttribute('aria-hidden','true');
+            document.body.classList.remove('modal-open');
+          }
+        }
+
+        window.addEventListener('DOMContentLoaded', handleInitialShow);
+        window.addEventListener('pageshow', handleInitialShow);
       })();
     </script>
 
     <!-- Start Here: data + rendering + handout actions -->
     <script>
       // ---------- Data ----------
-      const TOPICS = {
-        diagnosis: {
-          title: "I would like to understand my diagnosis better",
-          questions: [
+      const TOPICS={
+        diagnosis:{ title:"I would like to understand my diagnosis better",
+          questions:[
             "What does PSA score and stage of prostate cancer mean?",
             "How fast is my cancer growing?",
             "Do I need any more tests or biopsies to be sure about my diagnosis?",
             "How much time do I have to decide on my treatment?",
-            "Which doctors should I see, and when should I see them?"
-          ]
-        },
-        choosing: {
-          title: "I need to choose a treatment",
-          questions: [
+            "Which doctors should I see, and when should I see them?",
+            "How will the treatment affect my ability to have sex?"
+          ]},
+        choosing:{ title:"I need to choose a treatment",
+          questions:[
             "What treatment options do I have?",
             "Which treatment gives the lowest chance of the cancer coming back?",
             "If you were in my place, which treatment would you choose?",
@@ -425,12 +387,9 @@
             "What are my surgery options?",
             "What are the side effects of radiation?",
             "Will I need hormone therapy?"
-            "How will the treatment affect my ability to have sex?"
-          ]
-        },
-        during: {
-          title: "I am going through treatment",
-          questions: [
+          ]},
+        during:{ title:"I am going through treatment",
+          questions:[
             "Can you walk me through the steps involved in my treatment plan?",
             "What side effects should I expect from my treatment?",
             "Are there any tools or tips you recommend for coping with common side effects?",
@@ -439,40 +398,35 @@
             "Are there counselors or support groups available?",
             "What integrative therapy services are available to support me during treatment?",
             "The cost of my treatment is high — what options do I have for financial assistance?"
-          ]
-        },
-        after: {
-          title: "I completed my treatment. What is next?",
-          questions: [
+          ]},
+        after:{ title:"I completed my treatment. What is next?",
+          questions:[
             "Which specific tests will I need during follow-up, and how often?",
             "Who will coordinate my follow-up care?",
             "What symptoms should prompt me to contact you between scheduled visits?",
             "Am I at increased risk for any health conditions because of my treatment?",
             "Are there lifestyle changes or behaviors you recommend to help reduce the risk of cancer coming back?",
             "Can you recommend support groups or counseling services for survivors with prostate cancer?"
-          ]
-        },
-        integrative: {
-          title: "I hope to learn about complementary and integrative therapy",
-          questions: [
+          ]},
+        integrative:{ title:"I hope to learn about complementary and integrative therapy",
+          questions:[
             "Can any vitamins, herbs, or lifestyle changes make my treatment less effective or cause side effects?",
             "How do I know if a supplement or therapy is safe for me?",
             "Where can I find good information about complementary therapies for people with cancer?",
             "What should I eat or drink during treatment to help me stay strong and recover better?",
             "Where can I find a doctor or specialist who works in integrative medicine?"
-          ]
-        }
+          ]}
       };
 
-      const ER_LINKS = {
-        diagnosis: "./diagnosis/diagnosisinfo.html",
-        choosing: "./choosingtreatment/choosingtreatmentinfo.html",
-        during: "./treatment/treatmentinfo.html",
-        after: "./aftertreatment/aftertreatmentinfo.html",
-        integrative: "./complementary/complementaryinfo.html"
+      const ER_LINKS={
+        diagnosis:"./diagnosis/diagnosisinfo.html",
+        choosing:"./choosingtreatment/choosingtreatmentinfo.html",
+        during:"./treatment/treatmentinfo.html",
+        after:"./aftertreatment/aftertreatmentinfo.html",
+        integrative:"./complementary/complementaryinfo.html"
       };
 
-      const RECOMMENDATIONS = [
+      const RECOMMENDATIONS=[
         "<b>Consider bringing a friend or loved one</b> to help you remember information shared during your appointment.",
         "<b>Learn about your specific condition</b> from trusted sources of information.",
         "<b>Your healthcare team welcomes your questions.</b> Don’t hesitate to ask to clarify anything you're unsure about.",
@@ -482,85 +436,65 @@
       ];
 
       // ---------- Build sections ----------
-      const container = document.getElementById("accordion");
+      const container=document.getElementById("accordion");
 
-      function buildSections() {
-        if (!container) return;
-        container.innerHTML = "";
-        Object.entries(TOPICS).forEach(([key, topic]) => {
-          const details = document.createElement("details");
-          details.className = "section";
-          details.open = false;
+      function buildSections(){
+        if(!container) return;
+        container.innerHTML="";
+        Object.entries(TOPICS).forEach(([key,topic])=>{
+          const details=document.createElement("details");
+          details.className="section"; details.open=false;
 
-          const summary = document.createElement("summary");
-          summary.textContent = topic.title;
+          const summary=document.createElement("summary");
+          summary.textContent=topic.title;
 
-          const wrap = document.createElement("div");
-          wrap.className = "section-content";
+          const wrap=document.createElement("div"); wrap.className="section-content";
+          const toolbar=document.createElement("div"); toolbar.className="section-toolbar";
 
-          const toolbar = document.createElement("div");
-          toolbar.className = "section-toolbar";
+          const selectBtn=document.createElement("button");
+          selectBtn.className="mini"; selectBtn.type="button"; selectBtn.textContent="Select all";
 
-          const selectBtn = document.createElement("button");
-          selectBtn.className = "mini";
-          selectBtn.type = "button";
-          selectBtn.textContent = "Select all";
+          const clearBtn=document.createElement("button");
+          clearBtn.className="mini"; clearBtn.type="button"; clearBtn.textContent="Clear all";
 
-          const clearBtn = document.createElement("button");
-          clearBtn.className = "mini";
-          clearBtn.type = "button";
-          clearBtn.textContent = "Clear all";
+          const er=document.createElement("a");
+          er.className="eres-btn"; er.href=ER_LINKS[key]||"#"; er.target="_blank"; er.rel="noopener";
+          er.setAttribute("aria-label",`Open eResources to Read for ${topic.title}`);
+          er.textContent="eResources to Read";
 
-          const er = document.createElement("a");
-          er.className = "eres-btn";
-          er.href = ER_LINKS[key] || "#";
-          er.target = "_blank";
-          er.rel = "noopener";
-          er.setAttribute("aria-label", `Open eResources to Read for ${topic.title}`);
-          er.textContent = "eResources to Read";
-
-          const list = document.createElement("ul");
-          list.className = "q-list";
-          topic.questions.forEach((q, i) => {
-            const id = `q-${key}-${i}`;
-            const li = document.createElement("li");
-            li.innerHTML = `<input type="checkbox" id="${id}" /><label for="${id}">${q}</label>`;
+          const list=document.createElement("ul"); list.className="q-list";
+          topic.questions.forEach((q,i)=>{
+            const id=`q-${key}-${i}`;
+            const li=document.createElement("li");
+            li.innerHTML=`<input type="checkbox" id="${id}" /><label for="${id}">${q}</label>`;
             list.appendChild(li);
           });
 
-          selectBtn.addEventListener("click", () => {
-            list.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = true));
-          });
-          clearBtn.addEventListener("click", () => {
-            list.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
-          });
+          selectBtn.addEventListener("click", ()=>{ list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=true); });
+          clearBtn.addEventListener("click",  ()=>{ list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=false); });
 
-          toolbar.appendChild(selectBtn);
-          toolbar.appendChild(clearBtn);
-          toolbar.appendChild(er);
-          wrap.appendChild(toolbar);
-          wrap.appendChild(list);
-          details.appendChild(summary);
-          details.appendChild(wrap);
+          toolbar.appendChild(selectBtn); toolbar.appendChild(clearBtn); toolbar.appendChild(er);
+          wrap.appendChild(toolbar); wrap.appendChild(list);
+          details.appendChild(summary); details.appendChild(wrap);
           container.appendChild(details);
         });
       }
 
       // ---------- Selection helpers ----------
-      function getSelectedByTopic() {
-        const grouped = {};
-        document.querySelectorAll(".q-list input[type='checkbox']:checked").forEach((cb) => {
-          const key = cb.id.split("-")[1];
-          const text = cb.nextElementSibling.textContent.trim();
-          if (!grouped[key]) grouped[key] = [];
+      function getSelectedByTopic(){
+        const grouped={};
+        document.querySelectorAll(".q-list input[type='checkbox']:checked").forEach(cb=>{
+          const key=cb.id.split("-")[1];
+          const text=cb.nextElementSibling.textContent.trim();
+          if(!grouped[key]) grouped[key]=[];
           grouped[key].push(text);
         });
         return grouped;
       }
 
       // ---------- Handout ----------
-      function handoutHTML(grouped) {
-        const instructions = `
+      function handoutHTML(grouped){
+        const instructions=`
           <div class="panel">
             <p>Here are the questions you chose to ask your doctors.</p>
             <ul>
@@ -570,21 +504,19 @@
             </ul>
           </div>`;
 
-        const keys = Object.keys(grouped);
-        let questionsHTML = "";
-        if (keys.length === 0) {
-          questionsHTML = `<div class="panel"><p>(Chosen questions appear here.)</p></div>`;
-        } else {
-          questionsHTML = keys
-            .map((key) => {
-              const title = TOPICS[key]?.title || key;
-              const items = grouped[key].map((q) => `<li>${q}</li>`).join("");
-              return `<div class="panel"><h4>${title}</h4><ul>${items}</ul></div>`;
-            })
-            .join('<div style="height:14px"></div>');
+        const keys=Object.keys(grouped);
+        let questionsHTML="";
+        if(keys.length===0){
+          questionsHTML=`<div class="panel"><p>(Chosen questions appear here.)</p></div>`;
+        }else{
+          questionsHTML=keys.map(key=>{
+            const title=TOPICS[key]?.title||key;
+            const items=grouped[key].map(q=>`<li>${q}</li>`).join("");
+            return `<div class="panel"><h4>${title}</h4><ul>${items}</ul></div>`;
+          }).join('<div style="height:14px"></div>');
         }
 
-        const recs = RECOMMENDATIONS.map((r) => `<li>${r}</li>`).join("");
+        const recs=RECOMMENDATIONS.map(r=>`<li>${r}</li>`).join("");
 
         return `
           <div class="handout">
@@ -600,96 +532,72 @@
           </div>`;
       }
 
-      function buildHandoutStage() {
-        const grouped = getSelectedByTopic();
-        const stage = document.getElementById("printStage");
-        stage.innerHTML = handoutHTML(grouped);
+      function buildHandoutStage(){
+        const grouped=getSelectedByTopic();
+        const stage=document.getElementById("printStage");
+        stage.innerHTML=handoutHTML(grouped);
         return stage.firstElementChild;
       }
 
-      // ---------- PDF ----------
-      async function createHandoutPDF() {
-        const root = buildHandoutStage(); // .handout
-        const frame = root.querySelector(".frame");
+      // ---------- PDF / Print ----------
+      async function createHandoutPDF(){
+        const root=buildHandoutStage();
+        const frame=root.querySelector(".frame");
 
-        const pdf = new window.jspdf.jsPDF({ unit: "mm", format: "a4", compress: true });
-        const pageW = pdf.internal.pageSize.getWidth();
-        const pageH = pdf.internal.pageSize.getHeight();
-        const margin = 10;
-        const contentW = pageW - margin * 2;
-        const contentH = pageH - margin * 2;
-        const overlapPx = 6;
+        const pdf=new window.jspdf.jsPDF({ unit:"mm", format:"a4", compress:true });
+        const pageW=pdf.internal.pageSize.getWidth();
+        const pageH=pdf.internal.pageSize.getHeight();
+        const margin=10, contentW=pageW - margin*2, contentH=pageH - margin*2, overlapPx=6;
 
-        let cursorHmm = 0;
+        let cursorHmm=0;
+        const blocks=Array.from(frame.children).filter(el=>el.classList.contains("chip")||el.classList.contains("panel"));
 
-        const blocks = Array.from(frame.children).filter(
-          (el) => el.classList.contains("chip") || el.classList.contains("panel")
-        );
+        for(const el of blocks){
+          const canvas=await html2canvas(el,{ backgroundColor:"#ffffff", scale:Math.min(2, window.devicePixelRatio||1.5) });
+          const pxPerMm=canvas.width/contentW;
+          const blockHmm=canvas.height/pxPerMm;
 
-        for (const el of blocks) {
-          const canvas = await html2canvas(el, {
-            backgroundColor: "#ffffff",
-            scale: Math.min(2, window.devicePixelRatio || 1.5)
-          });
+          if(cursorHmm>0 && cursorHmm+blockHmm>contentH){ pdf.addPage(); cursorHmm=0; }
 
-          const pxPerMm = canvas.width / contentW;
-          const blockHmm = canvas.height / pxPerMm;
-
-          if (cursorHmm > 0 && cursorHmm + blockHmm > contentH) {
-            pdf.addPage();
-            cursorHmm = 0;
-          }
-
-          if (blockHmm <= contentH) {
-            pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin + cursorHmm, contentW, blockHmm);
+          if(blockHmm<=contentH){
+            pdf.addImage(canvas.toDataURL("image/png"),"PNG",margin,margin+cursorHmm,contentW,blockHmm);
             cursorHmm += blockHmm + 2;
-          } else {
-            let y = 0;
-            const pageContentHPx = contentH * pxPerMm;
-            while (y < canvas.height) {
-              const sliceH = Math.min(pageContentHPx, canvas.height - y);
-              const c = document.createElement("canvas");
-              c.width = canvas.width;
-              c.height = sliceH;
-              c.getContext("2d").drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
-              const sliceHmm = sliceH / pxPerMm;
+          }else{
+            let y=0; const pageContentHPx=contentH*pxPerMm;
+            while(y<canvas.height){
+              const sliceH=Math.min(pageContentHPx, canvas.height-y);
+              const c=document.createElement("canvas");
+              c.width=canvas.width; c.height=sliceH;
+              c.getContext("2d").drawImage(canvas,0,y,canvas.width,sliceH,0,0,canvas.width,sliceH);
+              const sliceHmm=sliceH/pxPerMm;
 
-              if (cursorHmm > 0) {
-                pdf.addPage();
-                cursorHmm = 0;
-              }
-              pdf.addImage(c.toDataURL("image/png"), "PNG", margin, margin + cursorHmm, contentW, sliceHmm);
+              if(cursorHmm>0){ pdf.addPage(); cursorHmm=0; }
+              pdf.addImage(c.toDataURL("image/png"),"PNG",margin,margin+cursorHmm,contentW,sliceHmm);
               y += sliceH - overlapPx;
-              if (y < canvas.height) {
-                pdf.addPage();
-                cursorHmm = 0;
-              }
+              if(y<canvas.height){ pdf.addPage(); cursorHmm=0; }
             }
-            cursorHmm = 2;
+            cursorHmm=2;
           }
         }
         return pdf;
       }
 
-      // ---------- Actions ----------
-      async function downloadSelectedAsPDF() {
-        const pdf = await createHandoutPDF();
+      async function downloadSelectedAsPDF(){
+        const pdf=await createHandoutPDF();
         pdf.save("questions-handout.pdf");
       }
 
-      function printSelected() {
-        const html = `<!doctype html><html><head><meta charset="utf-8"><title>Questions Handout</title><style>${
+      function printSelected(){
+        const html=`<!doctype html><html><head><meta charset="utf-8"><title>Questions Handout</title><style>${
           document.querySelector("style").innerHTML
         }</style></head><body onload="window.print()"><div style="padding:24px;max-width:850px;margin:0 auto">${
           handoutHTML(getSelectedByTopic())
         }</div></body></html>`;
-        const w = window.open("", "_blank");
-        w.document.open();
-        w.document.write(html);
-        w.document.close();
+        const w=window.open("","_blank");
+        w.document.open(); w.document.write(html); w.document.close();
       }
 
-      window.addEventListener("DOMContentLoaded", () => {
+      window.addEventListener("DOMContentLoaded", ()=>{
         buildSections();
         document.getElementById("downloadPdfBtn").addEventListener("click", downloadSelectedAsPDF);
         document.getElementById("printBtn").addEventListener("click", printSelected);
