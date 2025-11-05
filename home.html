@@ -395,25 +395,18 @@
 
         // Initial show logic
         function handleInitialShow() {
-          // If deep-linked with #start, open Start modal and remove hash; skip intro entirely.
-          if (location.hash.toLowerCase() === '#start') {
-            if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
-            markIntroSeen();
-            openModal('startModal');
-            return;
-          }
-          // Otherwise, show intro once per session
-          if (!hasSeenIntro()) {
-            openModal('introModal');
-            // mark immediately so it won’t re-open on quick nav
-            markIntroSeen();
-          } else {
-            document.getElementById('introModal')?.setAttribute('aria-hidden','true');
-            document.body.classList.remove('modal-open');
-          }
-        }
-
-        window.addEventListener('DOMContentLoaded', handleInitialShow);
+       // Optional: allow deep link to Start modal; otherwise keep everything closed
+  if (wantsStartFromURL()) {
+    if (history.replaceState) history.replaceState(null, '', location.pathname);
+    openModal('startModal');
+  } else {
+    // Ensure both modals are closed on first paint
+    document.getElementById('introModal')?.setAttribute('aria-hidden','true');
+    document.getElementById('startModal')?.setAttribute('aria-hidden','true');
+    document.body.classList.remove('modal-open');
+  }
+}
+window.addEventListener('DOMContentLoaded', initOnLoad);
         window.addEventListener('pageshow', handleInitialShow);
       })();
     </script>
