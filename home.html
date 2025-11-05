@@ -110,7 +110,7 @@
       .links-pack>h2{ flex:0 0 100%; margin:0 0 8px 0 }
       .links-pack .secondary{ display:inline-flex; align-items:center; padding:8px 12px; line-height:1.2; white-space:normal; flex:0 1 auto; border-radius:12px }
 
-      /* Print/handout + FAB */
+      /* Print/handout */
       .print-stage{ position:fixed; left:-10000px; top:-10000px; width:794px; padding:24px; background:#fff }
       .handout{ font-family:Arial, Helvetica, sans-serif; color:#0f172a; line-height:1.55; font-size:18px }
       .handout .frame{ border:6px solid #6aa1cc; border-radius:36px; padding:16px }
@@ -119,9 +119,8 @@
       .handout h4{ margin:0 0 8px; font-size:18px }
       .handout ul{ margin:0; padding-left:22px }
       .handout li{ margin:8px 0 }
-      .fab{ position:fixed; right:18px; bottom:18px; z-index:998; display:inline-flex; align-items:center; gap:8px; padding:12px 16px; font-weight:800; border-radius:999px; border:1px solid #c7d9ea; background:#e8efff; color:#0b2a5d; box-shadow:var(--shadow); cursor:pointer }
-      .fab:focus-visible{ outline:3px solid var(--ring); outline-offset:2px }
-      @media (max-width:480px){ .fab{ right:12px; bottom:12px; padding:10px 14px } }
+      /* FAB removed */
+      .fab{ display:none; }
     </style>
   </head>
 
@@ -129,6 +128,10 @@
     <header class="container header">
       <a class="top-button" href="./careteam.html">Your Care Team</a>
       <a class="top-button" href="./information.html">Helpful Information Online</a>
+      <!-- NEW: Back to instructions in the header -->
+      <button id="backToInstructionsTop" class="top-button" type="button" aria-haspopup="dialog" aria-controls="introModal">
+        Back to instructions
+      </button>
     </header>
 
     <!-- BLOCKING Instructions Window -->
@@ -228,11 +231,6 @@
       </div>
     </main>
 
-    <!-- FAB: Back to instructions -->
-    <button id="backToInstructions" class="fab" type="button" aria-haspopup="dialog" aria-controls="introModal">
-      ⟲ Back to instructions
-    </button>
-
     <!-- Start Here Modal -->
     <div class="modal start-modal" id="startModal" role="dialog" aria-modal="true" aria-labelledby="startModalHeading" aria-hidden="true">
       <div class="modal-backdrop" data-close="startModal" aria-hidden="true"></div>
@@ -278,10 +276,9 @@
     <!-- Modal handlers -->
     <script>
       (function () {
-        // Show Instructions once per browser session.
+        // Session flag kept (harmless if you decide to use later)
         const INTRO_KEY = 'cq_intro_seen_session_v1';
         const storage = window.sessionStorage;
-
         const hasSeenIntro = () => { try { return storage.getItem(INTRO_KEY) === '1'; } catch { return false; } };
         const markIntroSeen = () => { try { storage.setItem(INTRO_KEY, '1'); } catch {} };
 
@@ -330,9 +327,7 @@
           const el = document.getElementById(id);
           if (!el) return;
           el.setAttribute('aria-hidden', 'true');
-
           if (id === 'introModal') markIntroSeen();
-
           releaseFocusTrap();
           const anyOpen = document.querySelector('.modal[aria-hidden="false"]');
           if (!anyOpen) document.body.classList.remove('modal-open');
@@ -341,7 +336,7 @@
         function escClose(e) {
           if (e.key === 'Escape') {
             document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m => m.setAttribute('aria-hidden', 'true'));
-            markIntroSeen(); // if intro was open, consider it seen
+            markIntroSeen();
             releaseFocusTrap();
             document.body.classList.remove('modal-open');
           }
@@ -377,9 +372,12 @@
           }
         });
 
-        // Back to instructions FAB
-        const back = document.getElementById('backToInstructions');
-        if (back) back.addEventListener('click', () => { closeModal('startModal'); openModal('introModal'); });
+        // Back to instructions (HEADER button)
+        const backTop = document.getElementById('backToInstructionsTop');
+        if (backTop) backTop.addEventListener('click', () => {
+          closeModal('startModal');
+          openModal('introModal');
+        });
 
         document.addEventListener('keydown', escClose);
 
@@ -393,21 +391,11 @@
           if (isSameOrigin(a.getAttribute('href') || a.href)) markIntroSeen();
         });
 
-        // Initial show logic
-        function handleInitialShow() {
-       // Optional: allow deep link to Start modal; otherwise keep everything closed
-  if (wantsStartFromURL()) {
-    if (history.replaceState) history.replaceState(null, '', location.pathname);
-    openModal('startModal');
-  } else {
-    // Ensure both modals are closed on first paint
-    document.getElementById('introModal')?.setAttribute('aria-hidden','true');
-    document.getElementById('startModal')?.setAttribute('aria-hidden','true');
-    document.body.classList.remove('modal-open');
-  }
-}
-window.addEventListener('DOMContentLoaded', initOnLoad);
-        window.addEventListener('pageshow', handleInitialShow);
+        // NOTE: No initial auto-open on load.
+        // Both modals remain closed until user clicks something.
+        document.getElementById('introModal')?.setAttribute('aria-hidden','true');
+        document.getElementById('startModal')?.setAttribute('aria-hidden','true');
+        document.body.classList.remove('modal-open');
       })();
     </script>
 
