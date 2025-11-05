@@ -249,119 +249,154 @@
     <div id="printStage" class="print-stage" aria-hidden="true"></div>
 
     <!-- Modal handlers -->
-    <script>
-      (function(){
-        const INTRO_KEY='cq_intro_seen_session_v1';
-        const storage=window.sessionStorage;
-        const hasSeenIntro=()=>{ try{return storage.getItem(INTRO_KEY)==='1';}catch{return false;} };
-        const markIntroSeen=()=>{ try{storage.setItem(INTRO_KEY,'1');}catch{} };
+   <script>
+  (function () {
+    // --- session flag (kept, harmless if you don't use it elsewhere)
+    const INTRO_KEY = 'cq_intro_seen_session_v1';
+    const storage = window.sessionStorage;
+    const markIntroSeen = () => { try { storage.setItem(INTRO_KEY, '1'); } catch {} };
 
-        let focusTrapHandler=null;
-        function trapFocus(root){
-          const FOCUSABLE='a[href], area[href], input, select, textarea, button, summary, [tabindex]:not([tabindex="-1"])';
-          const nodes=()=>Array.from(root.querySelectorAll(FOCUSABLE)).filter(el=>!el.hasAttribute('disabled')&&el.getAttribute('aria-hidden')!=='true');
-          function onFocusIn(e){ if(!root.contains(e.target)){ const list=nodes(); if(list.length) list[0].focus(); } }
-          function onKeydown(e){
-            if(e.key!=='Tab') return;
-            const list=nodes(); if(!list.length) return;
-            const first=list[0], last=list[list.length-1];
-            if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
-            else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
-          }
-          focusTrapHandler={onFocusIn,onKeydown};
-          document.addEventListener('focusin',onFocusIn);
-          document.addEventListener('keydown',onKeydown);
-        }
-        function releaseFocusTrap(){
-          if(!focusTrapHandler) return;
-          document.removeEventListener('focusin',focusTrapHandler.onFocusIn);
-          document.removeEventListener('keydown',focusTrapHandler.onKeydown);
-          focusTrapHandler=null;
-        }
+    let focusTrapHandler = null;
+    let booting = true;        // prevents other handlers from closing while we open
+    let initialized = false;   // avoid running init twice (DOMContentLoaded + pageshow)
 
-        function openModal(id){
-          const el=document.getElementById(id); if(!el) return;
-          el.setAttribute('aria-hidden','false');
-          document.body.classList.add('modal-open');
-          const first=el.querySelector('button,[href],input,summary,[tabindex]:not([tabindex="-1"])');
-          if(first) first.focus({preventScroll:true});
-          trapFocus(el);
+    function trapFocus(root) {
+      const FOCUSABLE = 'a[href], area[href], input, select, textarea, button, summary, [tabindex]:not([tabindex="-1"])';
+      const nodes = () => Array.from(root.querySelectorAll(FOCUSABLE))
+        .filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
+      function onFocusIn(e) {
+        if (!root.contains(e.target)) {
+          const list = nodes(); if (list.length) list[0].focus();
         }
-        function closeModal(id){
-          const el=document.getElementById(id); if(!el) return;
-          el.setAttribute('aria-hidden','true');
-          if(id==='introModal') markIntroSeen();
-          releaseFocusTrap();
-          const anyOpen=document.querySelector('.modal[aria-hidden="false"]');
-          if(!anyOpen) document.body.classList.remove('modal-open');
-        }
-        function escClose(e){
-          if(e.key==='Escape'){
-            document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m=>m.setAttribute('aria-hidden','true'));
-            markIntroSeen(); releaseFocusTrap(); document.body.classList.remove('modal-open');
-          }
-        }
+      }
+      function onKeydown(e) {
+        if (e.key !== 'Tab') return;
+        const list = nodes(); if (!list.length) return;
+        const first = list[0], last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+      focusTrapHandler = { onFocusIn, onKeydown };
+      document.addEventListener('focusin', onFocusIn);
+      document.addEventListener('keydown', onKeydown);
+    }
 
-        // Click: open Start modal from any trigger carrying data-open="startModal"
-        document.addEventListener('click', (e)=>{
-          const openBtn=e.target.closest('[data-open="startModal"]');
-          if(openBtn){
-            e.preventDefault();
-            markIntroSeen();
-            closeModal('introModal');
+    function releaseFocusTrap() {
+      if (!focusTrapHandler) return;
+      document.removeEventListener('focusin', focusTrapHandler.onFocusIn);
+      document.removeEventListener('keydown', focusTrapHandler.onKeydown);
+      focusTrapHandler = null;
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id); if (!el) return;
+      el.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      const first = el.querySelector('button,[href],input,summary,[tabindex]:not([tabindex="-1"])');
+      if (first) first.focus({ preventScroll: true });
+      trapFocus(el);
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id); if (!el) return;
+      el.setAttribute('aria-hidden', 'true');
+      if (id === 'introModal') markIntroSeen();
+      releaseFocusTrap();
+      const anyOpen = document.querySelector('.modal[aria-hidden="false"]');
+      if (!anyOpen) document.body.classList.remove('modal-open');
+    }
+
+    function escClose(e) {
+      if (e.key !== 'Escape' || booting) return;
+      document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m => m.setAttribute('aria-hidden', 'true'));
+      markIntroSeen(); releaseFocusTrap(); document.body.classList.remove('modal-open');
+    }
+
+    // Open Start Here from any trigger (cards, instructions button)
+    document.addEventListener('click', (e) => {
+      const openBtn = e.target.closest('[data-open="startModal"]');
+      if (openBtn) {
+        e.preventDefault();
+        markIntroSeen();
+        closeModal('introModal');
+        openModal('startModal');
+      }
+    });
+
+    // Close Intro (X or backdrop)
+    document.addEventListener('click', (e) => {
+      const closeIntro = e.target.closest('[data-intro-close]');
+      if (closeIntro) {
+        e.preventDefault();
+        markIntroSeen();
+        closeModal('introModal');
+      }
+    });
+
+    // Generic close (X or backdrop with data-close)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-close]');
+      if (btn) {
+        e.preventDefault();
+        closeModal(btn.getAttribute('data-close'));
+      }
+    });
+
+    // Back to instructions (header button)
+    const backTop = document.getElementById('backToInstructionsTop');
+    if (backTop) backTop.addEventListener('click', () => {
+      closeModal('startModal');
+      openModal('introModal');
+    });
+
+    document.addEventListener('keydown', escClose);
+
+    // Same-origin navigation marks intro as seen (doesn't affect start modal)
+    function isSameOrigin(href) {
+      try { return new URL(href, location.href).origin === location.origin; } catch { return false; }
+    }
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href]'); if (!a) return;
+      if (isSameOrigin(a.getAttribute('href') || a.href)) markIntroSeen();
+    });
+
+    // ---- Deep link support without blinking ----
+    function wantsStartFromURL() {
+      const h = (location.hash || '').toLowerCase();
+      if (h === '#start') return true;
+      const q = new URLSearchParams(location.search);
+      return q.has('start') && q.get('start') !== '0';
+    }
+
+    function initOnce() {
+      if (initialized) return;   // run only once
+      initialized = true;
+
+      // Keep both closed initially (HTML already has aria-hidden="true")
+      document.getElementById('introModal')?.setAttribute('aria-hidden','true');
+      document.getElementById('startModal')?.setAttribute('aria-hidden','true');
+      document.body.classList.remove('modal-open');
+
+      if (wantsStartFromURL()) {
+        // Defer two frames so no other init can immediately hide it
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
             openModal('startModal');
-          }
+            // Clean URL (#start or ?start=1) without reload
+            if (history.replaceState) history.replaceState(null, '', location.pathname);
+            booting = false;
+          });
         });
+      } else {
+        booting = false;
+      }
+    }
 
-        // Close intro via X or backdrop
-        document.addEventListener('click', (e)=>{
-          const closeIntro=e.target.closest('[data-intro-close]');
-          if(closeIntro){ e.preventDefault(); markIntroSeen(); closeModal('introModal'); }
-        });
+    window.addEventListener('DOMContentLoaded', initOnce);
+    window.addEventListener('pageshow', initOnce);
+  })();
+</script>
 
-        // Generic close for other modals
-        document.addEventListener('click', (e)=>{
-          const btn=e.target.closest('[data-close]');
-          if(btn){ e.preventDefault(); closeModal(btn.getAttribute('data-close')); }
-        });
-
-        // Back to instructions (header button)
-        const backTop=document.getElementById('backToInstructionsTop');
-        if(backTop) backTop.addEventListener('click', ()=>{ closeModal('startModal'); openModal('introModal'); });
-
-        document.addEventListener('keydown', escClose);
-
-        // Mark instructions as seen when navigating within same origin
-        function isSameOrigin(href){ try{ return new URL(href, location.href).origin===location.origin; }catch{ return false; } }
-        document.addEventListener('click', (e)=>{
-          const a=e.target.closest('a[href]'); if(!a) return;
-          if(isSameOrigin(a.getAttribute('href')||a.href)) markIntroSeen();
-        });
-
-        // Deep-link support: /home.html#start or ?start=1
-        function wantsStartFromURL(){
-          const h=(location.hash||'').toLowerCase();
-          if(h==='#start') return true;
-          const q=new URLSearchParams(location.search);
-          return q.has('start') && q.get('start')!=='0';
-        }
-
-        function handleInitialShow(){
-          if(wantsStartFromURL()){
-            if(history.replaceState) history.replaceState(null,'',location.pathname);
-            openModal('startModal');
-          }else{
-            // keep both closed on first paint
-            document.getElementById('introModal')?.setAttribute('aria-hidden','true');
-            document.getElementById('startModal')?.setAttribute('aria-hidden','true');
-            document.body.classList.remove('modal-open');
-          }
-        }
-
-        window.addEventListener('DOMContentLoaded', handleInitialShow);
-        window.addEventListener('pageshow', handleInitialShow);
-      })();
-    </script>
 
     <!-- Start Here: data + rendering + handout actions -->
     <script>
